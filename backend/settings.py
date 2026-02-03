@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = '/app/media'
 
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
