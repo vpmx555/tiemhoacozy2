@@ -1,0 +1,230 @@
+{% extends "shop_flower/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+
+  <div class="row">
+
+    <!-- SIDEBAR -->
+    <div class="col-md-3">
+
+      <!-- SEARCH -->
+      <form method="get" class="mb-4">
+        <input type="text"
+               name="q"
+               value="{{ keyword }}"
+               class="form-control"
+               placeholder="🔍 Tìm hoa...">
+      </form>
+
+
+      <!-- FLOWER TYPE -->
+      <h5 class="mb-3">🌸 Loại hoa</h5>
+
+      <ul class="list-group">
+
+        <a href="{% url 'product_list' %}"
+           class="list-group-item {% if not selected_type %}active{% endif %}">
+          Tất cả
+        </a>
+
+        {% for type in flower_types %}
+        <a href="?type={{ type.id }}"
+           class="list-group-item
+           {% if selected_type == type.id|stringformat:'s' %}active{% endif %}">
+          {{ type.name }}
+        </a>
+        {% endfor %}
+
+      </ul>
+
+    </div>
+
+<!--#######################-->
+<!-- SLIDER -->
+<!--#######################-->
+    <div class="col-md-9 ps-4">
+
+        <div class="row">
+            <div class="filter-box mb-4">
+
+                <h5 class="filter-title">💰 Lọc theo giá</h5>
+
+                <form method="get">
+
+                    <div class="price-slider">
+
+                        <div class="slider-track"></div>
+                        <div class="slider-range" id="sliderRange"></div>
+
+                        <!-- MIN -->
+                        <input type="range"
+                            id="minRange"
+                            name="min_price"
+                            min="0"
+                            max="2000000"
+                            step="50000"
+                            value="{{ min_price|default:0 }}">
+
+                        <!-- MAX -->
+                        <input type="range"
+                            id="maxRange"
+                            name="max_price"
+                            min="0"
+                            max="2000000"
+                            step="50000"
+                            value="{{ max_price|default:2000000 }}">
+
+                    </div>
+
+                    <div class="price-value">
+                        <span>₫ <span id="minVal"></span></span>
+                        <span>₫ <span id="maxVal"></span></span>
+                    </div>
+
+                    <!-- giữ filter cũ -->
+                    <input type="hidden" name="q" value="{{ keyword }}">
+                    <input type="hidden" name="type" value="{{ selected_type }}">
+                    <input type="hidden" name="sort" value="{{ sort }}">
+
+                    <button class="btn btn-filter w-100 mt-4">
+                        Áp dụng lọc
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+<!--#######################-->
+<!-- SORT -->
+<!--#######################-->
+        <form method="get" class="mb-4">
+            <select name="sort"
+                    class="form-select"
+                    onchange="this.form.submit()">
+
+                <option value="">Sắp xếp</option>
+
+                <option value="price_asc"
+                    {% if sort == "price_asc" %}selected{% endif %}>
+                    Giá tăng dần
+                </option>
+
+                <option value="price_desc"
+                    {% if sort == "price_desc" %}selected{% endif %}>
+                    Giá giảm dần
+                </option>
+
+                <option value="name"
+                    {% if sort == "name" %}selected{% endif %}>
+                    Tên A–Z
+                </option>
+
+                <option value="new"
+                    {% if sort == "new" %}selected{% endif %}>
+                    Mới nhất
+                </option>
+
+            </select>
+
+            <!-- giữ filter -->
+            <input type="hidden" name="q" value="{{ keyword }}">
+            <input type="hidden" name="type" value="{{ selected_type }}">
+            <input type="hidden" name="min_price" value="{{ min_price }}">
+            <input type="hidden" name="max_price" value="{{ max_price }}">
+
+            </form>
+
+<!--#######################-->
+<!-- PRODUCT LIST -->
+<!--#######################-->
+
+      <div class="row">
+
+        {% for flower in flowers %}
+        <div class="col-md-4 mb-4">
+
+          <div class="card h-100 shadow-sm position-relative
+                {% if not flower.total_stock %}out-of-stock{% endif %}">
+
+            {% if not flower.total_stock %}
+                <div class="out-badge">HẾT HÀNG</div>
+            {% endif %}
+
+            <img src="{{ flower.image.url }}" class="card-img-top">
+
+            <div class="card-body text-center">
+
+                <h5>{{ flower.name }}</h5>
+
+                {% if flower.total_stock %}
+                <p class="text-danger fw-bold">
+                    {{ flower.sell_price|floatformat:0 }} VND
+                </p>
+                {% else %}
+                <p class="text-secondary fw-bold">
+                    Hết hàng
+                </p>
+                {% endif %}
+
+            </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Không tìm thấy sản phẩm phù hợp.</p>
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const minRange = document.getElementById("minRange");
+const maxRange = document.getElementById("maxRange");
+const minVal = document.getElementById("minVal");
+const maxVal = document.getElementById("maxVal");
+const sliderRange = document.getElementById("sliderRange");
+
+const gap = 50000;
+const max = parseInt(minRange.max);
+
+function updateSlider() {
+
+    let min = parseInt(minRange.value);
+    let maxv = parseInt(maxRange.value);
+
+    // ❌ không cho vượt nhau
+    if (maxv - min < gap) {
+        if (event.target === minRange) {
+            minRange.value = maxv - gap;
+        } else {
+            maxRange.value = min + gap;
+        }
+    }
+
+    min = parseInt(minRange.value);
+    maxv = parseInt(maxRange.value);
+
+    minVal.innerText = min.toLocaleString();
+    maxVal.innerText = maxv.toLocaleString();
+
+    const percentMin = (min / max) * 100;
+    const percentMax = (maxv / max) * 100;
+
+    sliderRange.style.left = percentMin + "%";
+    sliderRange.style.width = (percentMax - percentMin) + "%";
+}
+
+minRange.addEventListener("input", updateSlider);
+maxRange.addEventListener("input", updateSlider);
+
+updateSlider();
+</script>
+
+
+{% endblock %}

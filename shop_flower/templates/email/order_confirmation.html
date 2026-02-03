@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+{% load humanize %}
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body style="margin:0; padding:0; background:#f6f6f6; font-family:Arial;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f6f6f6; padding:40px 0;">
+<tr>
+<td align="center">
+
+<table width="600" cellpadding="0" cellspacing="0"
+       style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 0 15px rgba(0,0,0,0.08);">
+
+    <!-- BANNER -->
+    <tr>
+        <td>
+            <img src=" https://res.cloudinary.com/dmvsdbvjj/image/upload/v1769673263/banner_ylhyxw.jpg " width="600" style="display:block;">
+        </td>
+    </tr>
+
+    <!-- LOGO -->
+    <tr>
+        <td align="center" style="padding:20px;">
+            <img src=" https://res.cloudinary.com/dmvsdbvjj/image/upload/v1769672398/logo_tcwm4i.png " width="140">
+        </td>
+    </tr>
+
+    <!-- TITLE -->
+    <tr>
+        <td align="center" style="font-size:22px;font-weight:bold;color:#2f855a;">
+            XÁC NHẬN ĐƠN HÀNG
+        </td>
+    </tr>
+
+    <tr><td height="15"></td></tr>
+
+    <!-- INFO -->
+    <tr>
+        <td style="padding:0 40px;color:#444;font-size:14px;">
+            Xin chào <b>{{ order.customer_name }}</b>,<br><br>
+
+            Cảm ơn bạn đã đặt hoa tại <b>HolaFlower 🌸</b>.<br>
+            Đơn hàng của bạn đã được ghi nhận thành công.
+        </td>
+    </tr>
+
+    <tr><td height="20"></td></tr>
+
+    <!-- ORDER BOX -->
+    <tr>
+        <td style="padding:0 40px;">
+            <table width="100%" cellpadding="8" cellspacing="0"
+                   style="border:1px solid #eee;border-radius:6px;">
+                <tr style="background:#f0fff4;font-weight:bold;">
+                    <td>Sản phẩm</td>
+                    <td align="center">SL</td>
+                    <td align="right">Thành tiền</td>
+                </tr>
+
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.flower.name }}</td>
+                    <td align="center">{{ item.quantity }}</td>
+                    <td align="right">
+                        {{ item.total|intcomma }} đ
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+
+    <tr><td height="20"></td></tr>
+
+    <!-- TOTAL -->
+    <tr>
+        <td style="padding:0 40px;font-size:14px;">
+            <table width="100%">
+                <tr>
+                    <td>Tạm tính:</td>
+                    <td align="right">{{ order.sub_total|floatformat:0|intcomma }} đ</td>
+                </tr>
+                <tr>
+                    <td>Giảm giá:</td>
+                    <td align="right">- {{ order.discount_amount|floatformat:0|intcomma }} đ</td>
+                </tr>
+                <tr>
+                    <td>Phí vận chuyển:</td>
+                    <td align="right">{{ order.shipping_fee|floatformat:0|intcomma }} đ</td>
+                </tr>
+                <tr style="font-size:18px;font-weight:bold;color:#2f855a;">
+                    <td>TỔNG THANH TOÁN:</td>
+                    <td align="right">{{ order.total_amount|floatformat:0|intcomma }} đ</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr><td height="20"></td></tr>
+
+    <!-- FOOTER -->
+    <tr>
+        <td style="background:#2f855a;color:white;padding:20px;font-size:13px;text-align:center;">
+            HolaFlower © 2026<br>
+            Cảm ơn bạn đã tin tưởng chúng tôi 🌷
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

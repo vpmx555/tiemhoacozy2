@@ -1,0 +1,5 @@
+{% if order.status == "pending" %}
+⏳ Đơn hàng đang chờ xác nhận
+{% elif order.status == "confirmed" %}
+✅ Đặt hàng thành công
+{% endif %}

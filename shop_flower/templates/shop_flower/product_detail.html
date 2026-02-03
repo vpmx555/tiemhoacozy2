@@ -1,0 +1,122 @@
+{% extends "shop_flower/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row">
+
+        <!-- IMAGE -->
+        <div class="col-md-5">
+            <div class="border rounded p-3 bg-white">
+                <img 
+                    src="{{ flower.image.url }}" 
+                    class="img-fluid rounded"
+                    alt="{{ flower.name }}">
+            </div>
+        </div>
+
+        <!-- flower INFO -->
+        <div class="col-md-7">
+
+            <h2 class="fw-bold">{{ flower.name }}</h2>
+
+            <p class="text-muted mt-2">
+                Danh mục: 
+                <span class="badge bg-success">
+                    {{ flower.category.name }}
+                </span>
+            </p>
+
+            <h3 class="text-danger mt-3">
+                {{ flower.sell_price|floatformat:0 }} đ
+            </h3>
+
+            <hr>
+
+            <p>
+                {{ flower.description }}
+            </p>
+
+            <p class="mt-3">
+                Tình trạng:
+                {% if flower.stock > 0 %}
+                    <span class="text-success fw-bold">
+                        Còn hàng ({{ flower.stock }})
+                    </span>
+                {% else %}
+                    <span class="text-danger fw-bold">
+                        Hết hàng
+                    </span>
+                {% endif %}
+            </p>
+
+            <!-- ADD TO CART -->
+                {% csrf_token %}
+
+                <div class="row mt-4">
+
+                    <div class="col-3">
+                        <input 
+                            type="number"
+                            name="quantity"
+                            value="1"
+                            min="1"
+                            max="{{ flower.stock }}"
+                            class="form-control">
+                    </div>
+
+                    <div class="col-9">
+                        <div class="cart-action"
+                        data-id="{{ flower.id }}"
+                        data-name="{{ flower.name }}"
+                        data-price="{{ flower.sell_price }}"
+                        data-image="{{ flower.image.url }}">
+
+                        <button class="btn btn-danger rounded-pill fw-bold w-100 btn-add-cart">
+                            🛒 Thêm vào giỏ
+                        </button>
+                      </div>
+                    </div>
+
+                    
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RELATED flowerS -->
+    <div class="mt-5">
+        <h4>Sản phẩm liên quan</h4>
+        <hr>
+
+        <div class="row">
+            {% for item in flower.category.flower_set.all|slice:":4" %}
+                {% if item.id != flower.id %}
+                <div class="col-md-3">
+                    <div class="card h-100 shadow-sm flower-card">
+                        <img 
+                            src="{{ item.image.url }}" 
+                            class="card-img-top"
+                            style="height:180px; object-fit:cover">
+
+                        <div class="card-body">
+                            <h6>{{ item.name }}</h6>
+                            <p class="text-danger fw-bold">
+                                {{ item.sell_price|floatformat:0 }} đ
+                            </p>
+                            <a href="{% url 'flower_detail' item.id %}"
+                               class="btn btn-sm btn-outline-primary w-100">
+                                Xem
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

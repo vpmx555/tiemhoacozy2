@@ -1,0 +1,419 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shop Flower{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'shop_flower/css/style.css' %}">
+    
+</head>
+
+<body>
+  <div id="navbar-space">
+
+    <!-- Navbar chính -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+      <div class="container py-2">
+        <a class="navbar-brand" href="/">
+          <div class="logo-box">
+            <span class="logo-text d-block fs-4 fw-bold">CozySHOP</span>
+          </div>
+        </a>
+
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+          <div class="mx-auto search-wrapper">
+            <form class="d-flex search-group">
+              <input class="form-control form-control-sm" type="search" placeholder="Tìm kiếm sản phẩm...">
+              <button class="btn btn-search-sm" type="submit">🔍</button>
+            </form>
+
+            <!--<div class="header-features d-none d-lg-flex">
+                <span>🛡️ Chất lượng</span>
+                <span>🚚 Free ship</span>
+                <span>✅ Kiểm hàng</span>
+            </div>-->
+          </div>
+
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item me-3">
+              <a class="nav-link text-white d-flex align-items-center" href="#">
+                <h5 class="fw-bold text-danger">Hotline: 0936 033 374</h5>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <div class="btn-cart position-relative">
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal-giohang"> 🛒 </button>
+                <span class="cart-badge">0</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-menu-bar d-none d-lg-block">
+    <div class="container">
+
+        <ul class="nav main-category-menu justify-content-center flex-wrap">
+
+            <li class="nav-item">
+                <a class="nav-link text-white fw-bold" href="/">
+                    🏠 Trang chủ
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=1">
+                    💐 Bó hoa
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=2">
+                    🎂 Hoa sinh nhật
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=3">
+                    👑 Hoa sang trọng
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=4">
+                    🧺 Giỏ hoa
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=5">
+                    🎁 Hộp hoa
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=6">
+                    👰 Hoa cưới
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=7">
+                    🎉 Hoa chúc mừng
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=8">
+                    🕊 Hoa chia buồn
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=9">
+                    🎓 Hoa tốt nghiệp
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=10">
+                    🌸 Lan hồ điệp
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=11">
+                    🌹 Hoa hồng
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=12">
+                    🌼 Hoa cẩm chướng
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=13">
+                    🌻 Hoa hướng dương
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white category-link" href="/products/?type=14">
+                    💜 Hoa lavender
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+</div>
+
+  </div>
+
+
+<!-- Main content -->
+
+{% block content %}
+{% endblock %}
+
+<!-- Modal Giỏ hàng-->
+<!-- Modal Giỏ hàng -->
+<div class="modal fade cart-modal"
+     id="modal-giohang"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+
+    <div class="modal-content">
+
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center">
+            🛒 Giỏ hàng của bạn
+        </h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+
+        <!-- CART ITEMS -->
+        <div id="cart-items"></div>
+
+        <!-- POLICY -->
+        <div class="cart-policy mt-3">
+
+            <h6>🎁 Quyền lợi khi mua hoa tại shop</h6>
+
+            <ul>
+                <li>
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    Hỗ trợ giao gấp trong <strong>02 giờ</strong>.
+                </li>
+
+                <li>
+                    <i class="bi bi-gift-fill"></i>
+                    Tặng <strong>MIỄN PHÍ</strong> thiệp mừng và túi đựng hoa.
+                </li>
+
+                <li>
+                    <i class="bi bi-receipt"></i>
+                    Xuất <strong>hóa đơn VAT</strong> nếu Quý khách có nhu cầu.
+                </li>
+
+                <li>
+                    <i class="bi bi-camera-fill"></i>
+                    Gửi hình hoa thành phẩm để Quý khách
+                    <strong>xác nhận & chỉnh sửa</strong> trước khi giao.
+                </li>
+            </ul>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+
+        <button type="button"
+                class="btn btn-outline-secondary rounded-pill px-4"
+                data-bs-dismiss="modal">
+            Tiếp tục mua
+        </button>
+
+        <a href="{% url 'checkout' %}"
+           class="btn btn-danger rounded-pill fw-bold px-4">
+            Thanh toán
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<!--Modal xóa-->
+<div class="modal fade" id="modal-xoa" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center">
+          Xóa sản phẩm?
+        </h5>
+      </div>
+      <div class="modal-body text-center">
+        Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-danger rounded-pill fw-bold" id="btn-confirm-delete">
+          Đồng ý
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Footer -->
+<footer class="text-light py-4">
+  <section class="cozy-intro pt-5 pb-1">
+  <div class="container text-center">
+    <h2 class="mb-4">🌸 Tiệm hoa Cozy</h2>
+
+    <p class="intro-text">
+      Tiệm hoa Cozy là nơi mỗi bó hoa không chỉ đơn thuần là một sản phẩm,
+      mà còn là một thông điệp yêu thương được gửi gắm bằng tất cả sự tinh tế
+      và chân thành.
+    </p>
+
+    <p class="intro-text">
+      Với Cozy, mỗi đơn hoa là một tác phẩm nghệ thuật nhỏ, được chăm chút từ
+      màu sắc, hình dáng đến cảm xúc mà nó mang lại. Chúng tôi tin rằng hoa
+      chính là cầu nối dịu dàng giúp con người xích lại gần nhau hơn – trong
+      niềm vui, hạnh phúc và cả những khoảnh khắc cần được sẻ chia.
+    </p>
+  </div>
+</section>
+
+  <section class="footer-strip">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <ul class="footer-strip-menu" style="font-size:20px">
+
+          <li>
+            <a href="{% url 'home' %}">
+              <i class="bi bi-house-heart"></i>
+              <span>TRANG CHỦ</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'product_list' %}">
+              <i class="bi bi-flower1"></i>
+              <span>CỬA HÀNG</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'blog' %}">
+              <i class="bi bi-journal-text"></i>
+              <span>BLOG</span>
+            </a>
+          </li>
+
+          <!-- CHÍNH SÁCH DROPDOWN -->
+          <li class="footer-dropdown">
+            <a href="{% url 'policy' %}">
+              <i class="bi bi-shield-check"></i>
+              <span>CHÍNH SÁCH</span>
+            </a>
+
+            <ul class="footer-dropdown-menu">
+              <li><a href="{% url 'policy' %}#bao-mat">CHÍNH SÁCH BẢO MẬT</a></li>
+              <li><a href="{% url 'policy' %}#doi-tra">CHÍNH SÁCH ĐỔI TRẢ</a></li>
+              <li><a href="{% url 'policy' %}#van-chuyen">CHÍNH SÁCH VẬN CHUYỂN</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="{% url 'contact' %}">
+              <i class="bi bi-telephone"></i>
+              <span>LIÊN HỆ</span>
+            </a>
+          </li>
+
+        </ul>
+        <div class="footer-social text-center">
+          <a href="https://facebook.com" target="_blank">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://instagram.com" target="_blank">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="https://zalo.me/0973545359" target="_blank">
+            <i class="bi bi-chat-dots"></i>
+          </a>
+        </div>
+
+        <!-- SHOP INFO -->
+        <div class="footer-info text-center" style="color:black">
+          <h6>THÔNG TIN LIÊN HỆ</h6>
+          <p>
+            Shop hoa tươi chất lượng chúng tôi mong muốn mang đến nhiều mẫu mã
+            đa dạng chất lượng hoa tốt đến khách hàng
+          </p>
+
+          <p>
+            Địa chỉ: Hòa Lạc, Hà Nội<br>
+            <strong>0936033374</strong><br>
+            <p>
+              Email: tiemhoacozy@gmail.com
+            </p>
+          </p>
+        </div>
+  </div>
+  </div>
+  </div>
+</section>
+
+
+
+</footer>
+
+<!-- Bootstrap JS -->
+ <script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'shop_flower/js/home.js' %}"></script>
+<script src="{% static 'shop_flower/js/base.js' %}"></script>
+<script src="{% static 'shop_flower/js/cart.js' %}"></script>
+<script src="{% static 'shop_flower/js/discount.js' %}"></script>
+
+
+</body>
+</html>
