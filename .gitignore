@@ -9,7 +9,6 @@ __pycache__/
 *$py.class
 
 # Django
-staticfiles/
 local_settings.py
 
 # Logs
