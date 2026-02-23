@@ -43,7 +43,7 @@ class Flower(models.Model):
         blank=True
     )
     sell_price = models.DecimalField(max_digits=12, decimal_places=2)
-    image = models.ImageField(upload_to='flowers/', blank=True, null=True)
+    image = models.ImageField(upload_to='flowers/', blank=True, null=True, storage=)
     is_active = models.BooleanField(default=True)
     description = models.CharField(max_length=255, null=True, blank=True)
 

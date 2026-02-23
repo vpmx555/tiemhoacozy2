@@ -186,8 +186,6 @@ cloudinary.config(
     secure=True
 )
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
 # tài khoản shop (thay bằng thông tin thật)
 SHOP_BANK_ACCOUNT = "0936033374"
 SHOP_BANK_NAME = "MBBank"          # tên hiển thị
@@ -204,3 +202,12 @@ VIETQR_API_KEY = "679f07bb-1317-4cb8-80f8-1d0b93bb55cb"
 VIETQR_BANK_BIN = "970422"
 VIETQR_ACCOUNT_NO = "0936033374"
 VIETQR_ACCOUNT_NAME = "PHAM XUAN VINH"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
