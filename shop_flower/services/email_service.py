@@ -3,7 +3,10 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 
-def send_order_confirmation_email(order, order_items):
+def send_order_confirmation_email(order, order_items, payment_url=None):
+    # Không gửi nếu không có email
+    if not order.email:
+        return
 
     subject = f"Xác nhận đơn hàng #{order.id}"
 
@@ -20,6 +23,7 @@ def send_order_confirmation_email(order, order_items):
         {
             "order": order,
             "items": items,
+            "payment_url": payment_url,  # ⭐ QUAN TRỌNG
             "logo_url": f"{settings.SITE_URL}/static/shop_flower/banners/banner_3.webp",
             "banner_url": f"{settings.SITE_URL}/static/shop_flower/logo.jpg",
         }
@@ -27,10 +31,10 @@ def send_order_confirmation_email(order, order_items):
 
     email = EmailMultiAlternatives(
         subject=subject,
-        body="HolaFlower Order Confirmation",
+        body=f"Xác nhận đơn hàng #{order.id}",
         from_email=settings.EMAIL_HOST_USER,
-        to=[order.email]
+        to=[order.email],
     )
 
     email.attach_alternative(html_content, "text/html")
-    email.send()
+    email.send(fail_silently=False)

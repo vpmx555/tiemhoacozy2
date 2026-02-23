@@ -81,3 +81,27 @@ class FlowerAdmin(admin.ModelAdmin):
 
     stock.short_description = "Tồn kho"
 
+from django.core.mail import send_mail
+from .models import Order, Payment
+
+@admin.action(description="Xác nhận thanh toán và chuyển đơn sang 'đang giao'")
+def confirm_payment_and_ship(modeladmin, request, queryset):
+    # queryset sẽ là set of Payment
+    for payment in queryset:
+        payment.status = "confirmed"
+        payment.save()
+        order = payment.order
+        order.status = "đang giao"
+        order.save()
+        # gửi mail cho khách
+        subject = f"[HolaFlower] Đơn hàng #{order.id} đang được vận chuyển"
+        message = f"Xin chào {order.customer_name},\n\nĐơn hàng #{order.id} của bạn đã được xác nhận và đang trong quá trình vận chuyển."
+        if order.email:
+            send_mail(subject, message, None, [order.email], fail_silently=True)
+
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("order", "method", "status", "amount", "created_at")
+    actions = [confirm_payment_and_ship]
+
+admin.site.register(Payment, PaymentAdmin)
+admin.site.register(Order)

@@ -1,6 +1,7 @@
 
 # Create your models here.
 from django.db import models
+from django.utils import timezone
 
 
 class User(models.Model):
@@ -10,7 +11,7 @@ class User(models.Model):
     phone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
     default_address = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -42,7 +43,7 @@ class Flower(models.Model):
         blank=True
     )
     sell_price = models.DecimalField(max_digits=12, decimal_places=2)
-    image = models.ImageField(upload_to='flowers/', null=True, blank=True)
+    image = models.ImageField(upload_to='flowers/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     description = models.CharField(max_length=255, null=True, blank=True)
 
@@ -72,6 +73,12 @@ class Order(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL
+    )
+
+    created_at = models.DateTimeField(
+    auto_now_add=True,
+    null=True,
+    blank=True
     )
 
     customer_name = models.CharField(
@@ -133,6 +140,24 @@ class Order(models.Model):
         null=True
     )
 
+    sub_total = models.DecimalField(
+    max_digits=12,
+    decimal_places=2,
+    default=Decimal("0.00")
+    )
+
+    discount_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    shipping_fee = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
@@ -158,7 +183,7 @@ class Admin(models.Model):
     password_hash = models.CharField(max_length=255)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     role = models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username
@@ -176,7 +201,7 @@ class ProductFunnelLog(models.Model):
     ordered = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
 
-    first_view_time = models.DateTimeField(auto_now_add=True)
+    first_view_time = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
 
 
@@ -185,4 +210,55 @@ class FlowerImage(models.Model):
     image_url = models.CharField(max_length=255)
     is_cover = models.BooleanField(default=False)
     sort_order = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+class Payment(models.Model):
+    METHOD_CHOICES = [
+        ("cash", "Tiền mặt"),
+        ("bank", "Chuyển khoản"),
+    ]
+
+    STATUS_CHOICES = [
+        ("pending", "Chờ thanh toán"),    # mới tạo, chưa user chọn
+        ("initiated", "Đã bắt đầu thanh toán / chờ xác nhận"),  # user đã chọn phương thức (hoặc bấm 'Tôi đã chuyển khoản')
+        ("confirmed", "Đã xác nhận"),     # admin xác nhận đã nhận tiền
+        ("failed", "Thất bại"),
+    ]
+
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="payment"
+    )
+
+    method = models.CharField(
+        max_length=20,
+        choices=METHOD_CHOICES,
+        blank=True,
+        null=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    # bằng chứng (optional) - upload proof image nếu user muốn
+    proof = models.ImageField(
+        upload_to="payments/proofs/",
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Payment for Order #{self.order_id} ({self.method} - {self.status})"

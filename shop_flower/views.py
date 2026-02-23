@@ -8,6 +8,7 @@ from decimal import Decimal
 from .services.email_service import send_order_confirmation_email
 from .models import Flower, FlowerType
 from django.db.models import Q
+from shop_flower.services.vietqr_api import generate_vietqr_image_url
 
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -237,7 +238,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.mail import send_mail
 
-from .models import Order, OrderItem, Flower
+from .models import Order, OrderItem, Flower, Payment
+from shop_flower.services.payment_token import generate_payment_token
 
 
 import json
@@ -255,17 +257,14 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Order, OrderItem, Flower
 from .services.email_service import send_order_confirmation_email
-
+from django.urls import reverse
 
 def checkout(request):
-
     if request.method == "POST":
-
         data = json.loads(request.body.decode("utf-8"))
 
         cart = data.get("cart", [])
         voucher = data.get("voucher")
-
         customer = data.get("customer", {})
 
         name = customer.get("name") or "Unknown"
@@ -280,9 +279,7 @@ def checkout(request):
                 "message": "Giỏ hàng trống"
             })
 
-        # =========================
-        # 1️⃣ CREATE ORDER
-        # =========================
+        # 1) CREATE ORDER
         order = Order.objects.create(
             user=None,
             customer_name=name,
@@ -290,21 +287,20 @@ def checkout(request):
             email=email,
             delivery_address=address,
             note=note,
+            sub_total=0,
+            discount_amount=0,
+            shipping_fee=0,
             total_amount=0,
-            status="pending"
+            status="chờ duyệt"
         )
 
         total = Decimal("0")
         order_items = []
 
-        # =========================
-        # 2️⃣ CREATE ORDER ITEMS
-        # =========================
+        # 2) CREATE ORDER ITEMS
         for item in cart:
-
             flower_id = item["flower_id"]
             qty = max(1, int(item.get("quantity", 1)))
-
             flower = get_object_or_404(Flower, id=flower_id)
             price = Decimal(flower.sell_price)
 
@@ -318,9 +314,7 @@ def checkout(request):
             order_items.append(order_item)
             total += price * qty
 
-        # =========================
-        # 3️⃣ VOUCHER
-        # =========================
+        # 3) VOUCHER
         discount = Decimal("0")
         shipping_fee = Decimal("30000")
 
@@ -331,23 +325,32 @@ def checkout(request):
 
         final_total = total - discount + shipping_fee
 
-        # =========================
-        # 4️⃣ UPDATE ORDER
-        # =========================
+        # 4) UPDATE ORDER
         order.sub_total = total
         order.discount_amount = discount
+        order.shipping_fee = shipping_fee
         order.total_amount = final_total
         order.save()
 
-        # =========================
-        # 5️⃣ SEND EMAIL
-        # =========================
-        if email:
-            send_order_confirmation_email(order, order_items)
+        # 5) CREATE PAYMENT (pending)
+        payment = Payment.objects.create(
+            order=order,
+            amount=final_total,
+            status="pending"
+        )
 
-        # =========================
-        # 6️⃣ SAVE SESSION
-        # =========================
+        # 6) GENERATE PAYMENT TOKEN
+        payment_token = generate_payment_token(order.id)
+
+        # 7) SEND EMAIL (gửi link payment)
+        if email:
+            payment_url = request.build_absolute_uri(
+                reverse('payment', args=[payment_token])
+            )
+            # Sửa hàm send_order_confirmation_email để nhận payment_url
+            send_order_confirmation_email(order, order_items, payment_url=payment_url)
+
+        # 8) SAVE SESSION
         request.session["order_id"] = order.id
 
         return JsonResponse({
@@ -356,8 +359,6 @@ def checkout(request):
         })
 
     return render(request, "shop_flower/checkout.html")
-
-
 
 
 def order_pending(request, order_id):
@@ -383,3 +384,120 @@ def contact(request):
 
 def policy(request):
     return render(request, "shop_flower/policy.html")
+
+# shop_flower/views.py (thêm phần imports ở đầu file)
+import base64
+from io import BytesIO
+import qrcode
+from django.conf import settings
+from django.shortcuts import render, redirect
+from .services.payment_token import verify_payment_token
+
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.views.decorators.http import require_http_methods
+from .models import Order, Payment
+from .services.vietqr_api import generate_vietqr  # dùng API
+# nếu bạn vẫn muốn dùng local QR thì đổi lại import
+
+@require_http_methods(["GET", "POST"])
+def payment(request, token):
+    # =========================
+    # VERIFY TOKEN
+    # =========================
+    order_id = verify_payment_token(token)
+    if not order_id:
+        return render(request, "shop_flower/payment_invalid.html", status=400)
+
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return render(request, "shop_flower/payment_invalid.html", status=404)
+
+    # =========================
+    # GET OR CREATE PAYMENT
+    # =========================
+    payment, _ = Payment.objects.get_or_create(
+        order=order,
+        defaults={
+            "amount": order.total_amount,
+            "status": "pending",
+        },
+    )
+
+    context = {
+        "order": order,
+        "payment": payment,
+        "token": token,
+    }
+
+    # =========================================================
+    # POST HANDLE
+    # =========================================================
+    if request.method == "POST":
+        method = request.POST.get("method")
+        action = request.POST.get("action")
+        proof_file = request.FILES.get("proof")
+
+        # ---------- chọn phương thức ----------
+        if method:
+            if method not in ("cash", "bank"):
+                context["error"] = "Phương thức không hợp lệ."
+                return render(request, "shop_flower/payment_page.html", context)
+
+            payment.method = method
+            payment.status = "initiated"
+
+            if proof_file:
+                payment.proof = proof_file
+
+            payment.save()
+
+            # ===== CASH =====
+            if method == "cash":
+                context["message"] = (
+                    "Bạn đã chọn Thanh toán tiền mặt. "
+                    "Admin sẽ liên hệ để xác nhận."
+                )
+                return render(request, "shop_flower/payment_page.html", context)
+
+            # ===== BANK =====
+            if method == "bank":
+                return redirect(f"{reverse('payment', args=[token])}?show_bank=1")
+
+        # ---------- user báo đã chuyển ----------
+        if action == "i_have_transferred":
+            if proof_file:
+                payment.proof = proof_file
+
+            payment.status = "initiated"
+            payment.save()
+
+            context["message"] = (
+                "Cảm ơn. Chúng tôi đã nhận thông báo. "
+                "Admin sẽ kiểm tra và xác nhận sớm."
+            )
+            return render(request, "shop_flower/payment_page.html", context)
+
+    # =========================================================
+    # GET → GENERATE VIETQR (CHỈ KHI BANK)
+    # =========================================================
+    print("PAYMENT METHOD:", payment.method)
+    if payment.method == "bank":
+        try:
+            print("QR BLOCK ENTERED")
+            qr_url = generate_vietqr_image_url(order)
+
+            context.update({
+                "qr_data_uri": qr_url,
+                "bank_account": settings.VIETQR_ACCOUNT_NO,
+                "beneficiary": settings.VIETQR_ACCOUNT_NAME,
+                "bank_name": getattr(settings, "VIETQR_BANK_NAME", "Ngân hàng"),
+            })
+
+        except Exception as e:
+            # ⚠️ tránh crash production
+            context["error"] = "Không thể tạo mã QR. Vui lòng thử lại sau."
+            print("VIETQR ERROR:", e)
+
+    return render(request, "shop_flower/payment_page.html", context)

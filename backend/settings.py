@@ -80,6 +80,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://tiemhoacozy.com",
+    "https://www.tiemhoacozy.com",
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -143,8 +151,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'holaflower.store@gmail.com'
-EMAIL_HOST_PASSWORD = 'jsyv ntap jfgn lstr'
+EMAIL_HOST_USER = 'tiemhoacozy@gmail.com'
+EMAIL_HOST_PASSWORD = 'sams vzve dzhe htbq'
 
 import cloudinary
 import cloudinary.uploader
@@ -157,3 +165,21 @@ cloudinary.config(
     secure=True
 )
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# tài khoản shop (thay bằng thông tin thật)
+SHOP_BANK_ACCOUNT = "0936033374"
+SHOP_BANK_NAME = "MBBank"          # tên hiển thị
+SHOP_BANK_BENEFICIARY = "PHAM XUAN VINH" # tên chủ tài khoản
+SHOP_BANK_GUI = "A000000727"            # giữ mặc định cho POC (NAPAS-like)
+SHOP_BANK_SUB = None
+SHOP_BANK_CITY = "HANOI"
+SHOP_BANK_BIN = "970422"
+
+# ===== VietQR =====
+VIETQR_CLIENT_ID = "e5b3e906-251a-45ed-9831-064dba387b96"
+VIETQR_API_KEY = "679f07bb-1317-4cb8-80f8-1d0b93bb55cb"
+
+VIETQR_BANK_BIN = "970422"
+VIETQR_ACCOUNT_NO = "0936033374"
+VIETQR_ACCOUNT_NAME = "PHAM XUAN VINH"

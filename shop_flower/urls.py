@@ -16,7 +16,7 @@ urlpatterns = [
     path("blog/", views.blog, name="blog"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
-
+    path('payment/<str:token>/', views.payment, name='payment'),
     #path("order-success/<int:order_id>/", views.order_success, name="order_success"),
 
 ]

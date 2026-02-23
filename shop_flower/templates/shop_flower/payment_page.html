@@ -1,0 +1,81 @@
+<!-- templates/shop_flower/payment_page.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Thanh toán đơn hàng #{{ order.id }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding:20px; background:#f6f6f6; }
+    .card { background:white; padding:20px; border-radius:8px; max-width:800px; margin:0 auto; box-shadow: 0 6px 18px rgba(0,0,0,0.06);}
+    .btn { display:inline-block; padding:10px 16px; border-radius:6px; text-decoration:none; color:white; background:#2f855a; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Thanh toán đơn hàng #{{ order.id }}</h2>
+    <p><strong>Khách hàng:</strong> {{ order.customer_name }} — {{ order.phone }}</p>
+    <p><strong>Địa chỉ:</strong> {{ order.delivery_address }}</p>
+    <p><strong>Tổng:</strong> {{ order.total_amount|floatformat:0 }} đ</p>
+
+    {% if message %}
+      <p style="color:green">{{ message }}</p>
+    {% endif %}
+    {% if error %}
+      <p style="color:red">{{ error }}</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Chọn phương thức thanh toán</h3>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label>
+        <input type="radio" name="method" value="cash" {% if payment.method == "cash" %}checked{% endif %}>
+        Thanh toán tiền mặt (COD)
+      </label>
+      <br><br>
+      <label>
+        <input type="radio" name="method" value="bank" {% if payment.method == "bank" %}checked{% endif %}>
+        Chuyển khoản ngân hàng
+      </label>
+
+      <div style="margin-top:12px;">
+        <button type="submit" class="btn">Xác nhận phương thức</button>
+      </div>
+    </form>
+
+    <hr>
+
+    <h3>Thanh toán chuyển khoản (QR manual)</h3>
+    <p class="muted">Nếu bạn chọn chuyển khoản, trang sẽ hiển thị QR chứa nội dung chuyển khoản và số tiền. Sau khi chuyển, bấm "Tôi đã chuyển khoản" để thông báo cho shop.</p>
+
+    {% if qr_data_uri %}
+      <div style="text-align:center; margin:18px 0;">
+        <img src="{{ qr_data_uri }}" class="img-fluid">
+      </div>
+      <p><strong>Tài khoản:</strong> {{ bank_account }} ({{ bank_name }})</p>
+      <p><strong>Người hưởng:</strong> {{ beneficiary }}</p>
+      <p><strong>Nội dung chuyển khoản:</strong> Thanh toán đơn hàng #{{ order.id }}</p>
+      <p><strong>Số tiền:</strong> {{ order.total_amount|floatformat:0 }} đ</p>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="i_have_transferred">
+        <div>
+          <label>Upload bằng chứng (tùy chọn): <input type="file" name="proof"></label>
+        </div>
+        <div style="margin-top:12px;">
+          <button type="submit" class="btn">Tôi đã chuyển khoản</button>
+        </div>
+      </form>
+    {% else %}
+      <p class="muted">Nhấn chọn "Chuyển khoản ngân hàng" và ấn "Xác nhận phương thức" để xem QR.</p>
+    {% endif %}
+
+    <hr>
+    <p class="muted">Lưu ý: Đây là QR **manual**. Shop sẽ kiểm tra và xác nhận thủ công sau khi bạn bấm "Tôi đã chuyển khoản".</p>
+  </div>
+</body>
+</html>

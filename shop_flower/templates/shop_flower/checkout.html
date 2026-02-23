@@ -2,95 +2,103 @@
 {% load static %}
 
 {% block content %}
+<style>
+    /* Custom CSS để bắt tone màu của CozyShop */
+    .cozy-bg {
+        background-color: #ff7c8a !important; /* Tone hồng cam giống thanh menu */
+        color: white !important;
+    }
+    .cozy-text {
+        color: #db3744 !important; /* Tone đỏ giống logo COZYSHOP và tiêu đề */
+    }
+    .cozy-btn {
+        background-color: #db3744 !important;
+        color: white !important;
+        border: none;
+    }
+    .cozy-btn:hover {
+        background-color: #c02c38 !important;
+        color: white !important;
+    }
+</style>
+
 <div class="container my-4">
 
-  <h3 class="mb-4">🧾 Thanh toán</h3>
+  <h3 class="mb-4 cozy-text fw-bold">🧾 Thanh toán</h3>
 
-  <div class = "row">
+  <div class="row">
 
-
-
-    <!-- CUSTOMER INFO -->
-    <!-- CUSTOMER INFO -->
-<div class="col-5">
-    <div class="card">
-        <div class="card-header bg-success text-white">
-            Thông tin giao hàng
-        </div>
-
-        <div class="card-body">
-
-            <!-- Họ tên -->
-            <div class="mb-3">
-                <label class="form-label">Họ tên</label>
-                <input
-                    id="name"
-                    class="form-control"
-                    required
-                    minlength="2"
-                    placeholder="Nguyễn Văn A"
-                >
-                <small class="text-danger d-none" id="err-name"></small>
+    <div class="col-5">
+        <div class="card">
+            <div class="card-header cozy-bg fw-bold">
+                Thông tin giao hàng
             </div>
 
-            <!-- Phone -->
-            <div class="mb-3">
-                <label class="form-label">Số điện thoại</label>
-                <input
-                    id="phone"
-                    class="form-control"
-                    required
-                    type="tel"
-                    pattern="^(0[0-9]{9})$"
-                    placeholder="0xxxxxxxxx"
-                >
-                <small class="text-danger d-none" id="err-phone"></small>
-            </div>
+            <div class="card-body">
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input
-                    id="email"
-                    class="form-control"
-                    type="email"
-                    placeholder="email@gmail.com"
-                >
-                <small class="text-danger d-none" id="err-email"></small>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Họ tên</label>
+                    <input
+                        id="name"
+                        class="form-control"
+                        required
+                        minlength="2"
+                        placeholder="Nguyễn Văn A"
+                    >
+                    <small class="text-danger d-none" id="err-name"></small>
+                </div>
 
-            <!-- Address -->
-            <div class="mb-3">
-                <label class="form-label">Địa chỉ giao hàng</label>
-                <textarea
-                    id="address"
-                    class="form-control"
-                    rows="2"
-                    required
-                    minlength="10"
-                ></textarea>
-                <small class="text-danger d-none" id="err-address"></small>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại</label>
+                    <input
+                        id="phone"
+                        class="form-control"
+                        required
+                        type="tel"
+                        pattern="^(0[0-9]{9})$"
+                        placeholder="0xxxxxxxxx"
+                    >
+                    <small class="text-danger d-none" id="err-phone"></small>
+                </div>
 
-            <!-- Note -->
-            <div class="mb-3">
-                <label class="form-label">Ghi chú</label>
-                <textarea
-                    id="note"
-                    class="form-control"
-                    rows="2"
-                ></textarea>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input
+                        id="email"
+                        class="form-control"
+                        type="email"
+                        placeholder="email@gmail.com"
+                    >
+                    <small class="text-danger d-none" id="err-email"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Địa chỉ giao hàng</label>
+                    <textarea
+                        id="address"
+                        class="form-control"
+                        rows="2"
+                        required
+                        minlength="10"
+                    ></textarea>
+                    <small class="text-danger d-none" id="err-address"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea
+                        id="note"
+                        class="form-control"
+                        rows="2"
+                    ></textarea>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-  
-
-  <!-- CART -->
-   <div class="col-7">
+  <div class="col-7">
     <div class="card mb-4">
-        <div class="card-header bg-success text-white">
+        <div class="card-header cozy-bg fw-bold">
         Giỏ hàng của bạn
         </div>
 
@@ -118,15 +126,13 @@
         </strong>
         </div>
         </div>
-        <!-- Voucher -->
+        
         <div class="mb-3">
             <label class="form-label">Voucher</label>
 
             <div class="d-flex align-items-center gap-2">
-                <!-- text hiển thị voucher đã chọn -->
-                <strong id="selected-voucher" class="text-success"></strong>
+                <strong id="selected-voucher" class="cozy-text"></strong>
 
-                <!-- nút chọn -->
                 <button
                     type="button"
                     class="btn btn-outline-secondary btn-sm"
@@ -138,15 +144,12 @@
             </div>
         </div>
 
-        <button id="btn-order" class="btn btn-danger rounded-pill fw-bold w-100">
+        <button id="btn-order" class="btn cozy-btn rounded-pill fw-bold w-100">
                 ✅ Đặt hàng
         </button>
     </div>
     
-        
-    
     </div>
-
 
 <div class="modal fade" id="voucherModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -159,9 +162,8 @@
 
       <div class="modal-body">
 
-        <!-- Freeship -->
         <div class="voucher-item mb-3 p-2 border rounded d-flex align-items-center"
-             onclick="selectVoucher('freeship')">
+             onclick="selectVoucher('freeship')" style="cursor: pointer;">
 
             <img
                 src="/static/shop_flower/vouchers/freeship.png"
@@ -175,9 +177,8 @@
             </div>
         </div>
 
-        <!-- Giảm 10% -->
         <div class="voucher-item p-2 border rounded d-flex align-items-center"
-             onclick="selectVoucher('discount10')">
+             onclick="selectVoucher('discount10')" style="cursor: pointer;">
 
             <img
                 src="/static/shop_flower/vouchers/discount10.png"
@@ -195,7 +196,6 @@
     </div>
   </div>
 </div>
-
 
 <script src="{% static 'shop_flower/js/checkout.js' %}"></script>
 <script src="{% static 'shop_flower/js/validate.js' %}"></script>
