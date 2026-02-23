@@ -169,7 +169,6 @@ SERVER_EMAIL = "no-reply@tiemhoacozy.com"
 #EMAIL_USE_TLS = True
 
 #EMAIL_HOST_USER = 'apikey'
-#EMAIL_HOST_PASSWORD = 'REMOVED'
 
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
