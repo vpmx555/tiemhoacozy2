@@ -37,8 +37,14 @@
 
         <div class="collapse navbar-collapse" id="mainNav">
           <div class="mx-auto search-wrapper">
-            <form class="d-flex search-group">
-              <input class="form-control form-control-sm" type="search" placeholder="Tìm kiếm sản phẩm...">
+            <form class="d-flex search-group" method="get" action="{% url 'product_list' %}">
+              <input
+                class="form-control form-control-sm"
+                type="search"
+                name="q"
+                placeholder="Tìm kiếm sản phẩm..."
+                value="{{ request.GET.q }}"
+              >
               <button class="btn btn-search-sm" type="submit">🔍</button>
             </form>
 
@@ -66,6 +72,9 @@
         </div>
       </div>
     </nav>
+
+
+
 
     <div class="main-menu-bar d-none d-lg-block">
     <div class="container">
@@ -388,7 +397,32 @@
 
 </footer>
 
+
+<!-- Floating CTA mini -->
+<div id="floatingCta" class="floating-cta">
+
+  <!-- Zalo -->
+
+<!-- Floating CTA mini (Hotline + Zalo) -->
+<div id="floatingCta" class="floating-cta" aria-live="polite">
+
+  <!-- Zalo round -->
+  <a class="fab-sm" href="https://zalo.me/0936033374" target="_blank" rel="noopener" aria-label="Chat Zalo 0936033374">
+    <!-- nếu có ảnh zalo: -->
+    <img src="{% static 'shop_flower/zalo-icon.png' %}" alt="Zalo" style="width:40px;height:40px;">
+  </a>
+
+  <!-- Hotline (tel:) -->
+  <a class="fab" href="tel:0936033374" aria-label="Gọi Hotline 0936033374">
+    <span class="icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
+    <span class="fab-label">Hotline: 0936 033 374</span>
+  </a>
+
+</div>
+
+
 <!-- Bootstrap JS -->
+
  <script>
 function getCookie(name) {
     let cookieValue = null;

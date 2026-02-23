@@ -848,3 +848,123 @@ body {
     }
 }
 
+/* ===== Floating CTA — hotline khẩn cấp (mini, tinh tế) ===== */
+.floating-cta{
+  position:fixed;
+  left:16px;
+  bottom:16px;
+  z-index:1300;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  pointer-events:auto;
+}
+
+/* small Zalo round */
+.fab-sm{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  background: linear-gradient(135deg,#ffffff,#ffffff);
+  box-shadow:0 8px 22px rgba(0,0,0,0.18);
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+
+/* ===== wrapper (FIX lỗi lấp ló phía sau) ===== */
+.fab-wrap{
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+/* ===== pill hotline ===== */
+.fab{
+  position: relative;
+  z-index: 2;
+
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  text-decoration:none;
+  color:#fff;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:.3px;
+
+  padding:7px 14px;
+  border-radius:999px;
+
+  /* 🔥 màu mới bạn yêu cầu */
+  background: linear-gradient(135deg,#ff9a9a,#ff7c7c);
+
+  box-shadow:0 8px 22px rgba(255,124,124,0.32);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    filter .25s ease;
+}
+
+/* ===== icon ===== */
+.fab .icon{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(255,255,255,0.22);
+  font-size:11px;
+}
+
+/* ===== hover ===== */
+.fab:hover, .fab-sm:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow:0 16px 36px rgba(255,124,124,0.45);
+  filter: brightness(1.06);
+}
+
+/* ================================================= */
+/* 🔥 URGENT EFFECT — tone theo #ff7c7c */
+/* ================================================= */
+
+@keyframes urgentPulse {
+  0% {
+    box-shadow: 0 8px 22px rgba(255,124,124,0.32),
+                0 0 0 0 rgba(255,124,124,0.45);
+  }
+  70% {
+    box-shadow: 0 16px 36px rgba(255,124,124,0.42),
+                0 0 0 10px rgba(255,124,124,0);
+  }
+  100% {
+    box-shadow: 0 8px 22px rgba(255,124,124,0.32),
+                0 0 0 0 rgba(255,124,124,0);
+  }
+}
+
+@keyframes urgentShake {
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
+}
+
+.fab.urgent, .fab-sm.urgent {
+  animation: urgentPulse 2.2s infinite;
+}
+
+.fab.urgent-shake, .fab-sm.urgent-shake {
+  animation: urgentShake .6s ease-in-out;
+}
+
+/* ===== mobile ===== */
+@media (max-width:520px){
+  .fab .fab-label { display:none; }
+  .fab { padding:8px; }
+}

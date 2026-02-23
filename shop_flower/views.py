@@ -154,12 +154,44 @@ def product_list(request):
 
 
 
-def product_detail(request, id):
-    flower = get_object_or_404(Flower, id=id)
+from django.shortcuts import render, get_object_or_404
+from .models import Flower
 
-    return render(request, 'shop_flower/product_detail.html', {
-        'flower': flower
-    })
+from django.shortcuts import get_object_or_404, render
+from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
+from .models import Flower
+
+
+def product_detail(request, id):
+    # queryset cơ sở có annotate stock
+    base_flowers = (
+        Flower.objects
+        .filter(is_active=True)
+        .annotate(
+            stock=Coalesce(
+                Sum("flowerbatch__remaining_quantity"),
+                0
+            )
+        )
+        .prefetch_related("flower_types")
+    )
+
+    # lấy flower hiện tại (đã có stock)
+    flower = get_object_or_404(base_flowers, id=id)
+
+    # 🔥 related products: share ít nhất 1 flower_type
+    related_products = base_flowers.filter(
+        flower_types__in=flower.flower_types.all()
+    ).exclude(
+        id=flower.id
+    ).distinct().order_by("?")[:8]
+
+    context = {
+        "flower": flower,
+        "related_products": related_products,
+    }
+    return render(request, "shop_flower/product_detail.html", context)
 
 def cart(request):
     return render(request, 'shop_flower/cart.html')

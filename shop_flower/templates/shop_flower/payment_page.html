@@ -1,81 +1,329 @@
 <!-- templates/shop_flower/payment_page.html -->
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
   <meta charset="utf-8">
   <title>Thanh toán đơn hàng #{{ order.id }}</title>
+
+  <!-- Optional: nếu muốn dùng font Poppins, giữ hoặc bỏ <link> này -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
   <style>
-    body { font-family: Arial, sans-serif; padding:20px; background:#f6f6f6; }
-    .card { background:white; padding:20px; border-radius:8px; max-width:800px; margin:0 auto; box-shadow: 0 6px 18px rgba(0,0,0,0.06);}
-    .btn { display:inline-block; padding:10px 16px; border-radius:6px; text-decoration:none; color:white; background:#2f855a; }
-    .muted { color:#666; }
+    :root{
+      --pink-50: #fff2f5;
+      --pink-100: #ffe8ee;
+      --pink-200: #ffd6e1;
+      --pink-500: #d9486f;
+      --accent: #d4556f;
+      --muted: #6b6b6b;
+      --card-shadow: 0 20px 40px rgba(212,85,111,0.08);
+      --card-border: rgba(212,85,111,0.12);
+      --radius: 18px;
+    }
+
+    /* Reset + base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background:
+        radial-gradient(1000px 400px at 10% 10%, rgba(212,85,111,0.04), transparent 8%),
+        radial-gradient(800px 300px at 90% 90%, rgba(212,85,111,0.03), transparent 10%),
+        linear-gradient(180deg, var(--pink-50), #fff);
+      color:#222;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+    }
+
+    .page-wrap{
+      max-width:980px;
+      margin:18px auto;
+      padding:32px;
+    }
+
+    /* Big decorative card wrapper like concept */
+    .panel {
+      background: linear-gradient(180deg, #fff, #fff);
+      border-radius: calc(var(--radius) + 6px);
+      padding:36px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      position:relative;
+      overflow:visible;
+    }
+
+    /* subtle outer frame (the pink rounded area in concept) */
+    .frame {
+      border-radius: calc(var(--radius) + 18px);
+      padding:26px;
+      background: linear-gradient(180deg, rgba(212,85,111,0.03), rgba(212,85,111,0.01));
+      box-shadow: 0 10px 30px rgba(212,85,111,0.03);
+    }
+
+    header.top {
+      text-align:center;
+      margin-bottom:18px;
+    }
+    .brand-title {
+      font-weight:800;
+      letter-spacing:1px;
+      color:var(--accent);
+      font-size:20px;
+      margin:0;
+    }
+    .page-title{
+      font-size:28px;
+      font-weight:800;
+      margin:8px 0 4px;
+      color:#b23d57;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+
+    .flower-icon{
+      width:42px;
+      height:42px;
+      display:inline-block;
+      margin-top:10px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding:26px;
+      margin-top:18px;
+      border: 1px solid rgba(212,85,111,0.08);
+      box-shadow: 0 8px 30px rgba(220,60,90,0.04);
+    }
+
+    .order-meta {
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .order-meta p{margin:0; font-size:15px}
+    .order-total{
+      margin-left:auto;
+      font-weight:700;
+      color:var(--pink-500);
+      font-size:18px;
+    }
+
+    h2.section-title{
+      font-size:20px;
+      margin:18px 0 8px;
+      color:#c84a66;
+      font-weight:700;
+    }
+
+    .muted{ color:var(--muted); font-size:14px; line-height:1.6 }
+
+    /* form controls */
+    .controls { margin-top:12px; display:flex; flex-direction:column; gap:14px; }
+    label.method{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.04);
+      cursor:pointer;
+      transition:all .15s;
+      background:linear-gradient(180deg, #fff, #fff);
+    }
+    label.method input[type="radio"]{ transform:scale(1.05); }
+    label.method:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.04) }
+
+    .btn {
+      display:inline-block;
+      padding:10px 18px;
+      border-radius:10px;
+      text-decoration:none;
+      color:white;
+      background: linear-gradient(180deg, #2f855a, #267048);
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow: 0 8px 18px rgba(47,133,90,0.12);
+    }
+    .btn.secondary{
+      background: transparent;
+      color:var(--pink-500);
+      border: 1px solid rgba(212,85,111,0.08);
+      box-shadow:none;
+    }
+
+    /* QR block */
+    .qr-wrap {
+      text-align:center;
+      margin:20px 0;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    img.img-fluid{ max-width:220px; width:45%; height:auto; border-radius:8px; border:1px solid rgba(0,0,0,0.03); }
+
+    .bank-info {
+      text-align:left;
+      min-width:220px;
+      max-width:420px;
+    }
+    .bank-info p{ margin:6px 0; font-size:15px }
+
+    /* proof file input */
+    .file-input {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:8px;
+    }
+    .file-input input[type="file"]{ border-radius:8px; }
+
+    hr.sep {
+      border:0;
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(212,85,111,0.08), transparent);
+      margin:22px 0;
+    }
+
+    /* responsive */
+    @media (max-width:720px){
+      .order-meta{ flex-direction:column; align-items:flex-start }
+      .order-total{ margin-left:0 }
+      img.img-fluid{ width:180px }
+      .page-title{ font-size:22px }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Thanh toán đơn hàng #{{ order.id }}</h2>
-    <p><strong>Khách hàng:</strong> {{ order.customer_name }} — {{ order.phone }}</p>
-    <p><strong>Địa chỉ:</strong> {{ order.delivery_address }}</p>
-    <p><strong>Tổng:</strong> {{ order.total_amount|floatformat:0 }} đ</p>
+  <div class="page-wrap">
+    <div class="frame">
+      <div class="panel" role="main" aria-labelledby="pageHeading">
 
-    {% if message %}
-      <p style="color:green">{{ message }}</p>
-    {% endif %}
-    {% if error %}
-      <p style="color:red">{{ error }}</p>
-    {% endif %}
+        <header class="top">
+          <div class="brand-title">Tiệm hoa Cozy</div>
+          <h1 id="pageHeading" class="page-title">Thanh toán & Xác nhận chuyển khoản</h1>
 
-    <hr>
+          <!-- Flower icon (inline SVG) -->
+          <div class="flower-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="#ffb3c7"/><stop offset="1" stop-color="#ff7fa3"/>
+                </linearGradient>
+              </defs>
+              <g transform="translate(8,8) scale(0.9)">
+                <path d="M24 2c2 3 6 5 9 6 3 0 6-2 6-2s-2 4-3 7c2 3 6 6 6 6s-4 0-7 2c-1 3 0 6 0 6s-4-2-7-3c-3 2-6 6-6 6s0-4-2-7c-3-1-6 0-6 0s2-4 3-7c-2-3-6-6-6-6s4 0 7-2C10 9 12 6 12 6S14 10 17 11c2-3 7-9 7-9z" fill="url(#g1)"/>
+                <circle cx="16" cy="16" r="4" fill="#ff4070"/>
+              </g>
+            </svg>
+          </div>
+        </header>
 
-    <h3>Chọn phương thức thanh toán</h3>
+        <div class="card" id="payment-card">
+          <div class="order-meta">
+            <p><strong>Khách hàng:</strong> {{ order.customer_name }} — {{ order.phone }}</p>
+            <p><strong>Địa chỉ:</strong> {{ order.delivery_address }}</p>
+            <div class="order-total"><strong>Tổng:</strong> {{ order.total_amount|floatformat:0 }} đ</div>
+          </div>
 
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <label>
-        <input type="radio" name="method" value="cash" {% if payment.method == "cash" %}checked{% endif %}>
-        Thanh toán tiền mặt (COD)
-      </label>
-      <br><br>
-      <label>
-        <input type="radio" name="method" value="bank" {% if payment.method == "bank" %}checked{% endif %}>
-        Chuyển khoản ngân hàng
-      </label>
+          {% if message %}
+            <p style="color:green; font-weight:600">{{ message }}</p>
+          {% endif %}
+          {% if error %}
+            <p style="color:red; font-weight:600">{{ error }}</p>
+          {% endif %}
 
-      <div style="margin-top:12px;">
-        <button type="submit" class="btn">Xác nhận phương thức</button>
-      </div>
-    </form>
+          <hr class="sep">
 
-    <hr>
+          <h2 class="section-title">1. Chọn phương thức thanh toán</h2>
+          <form method="post" enctype="multipart/form-data" id="method-form" class="method-form">
+            {% csrf_token %}
+            <div class="controls">
+              <label class="method" for="method-cash">
+                <input id="method-cash" type="radio" name="method" value="cash" {% if payment.method == "cash" %}checked{% endif %}>
+                <div>
+                  <div style="font-weight:700">Thanh toán tiền mặt (COD)</div>
+                  <div class="muted">Thanh toán khi nhận hàng — tiện lợi, không cần chuyển trước.</div>
+                </div>
+              </label>
 
-    <h3>Thanh toán chuyển khoản (QR manual)</h3>
-    <p class="muted">Nếu bạn chọn chuyển khoản, trang sẽ hiển thị QR chứa nội dung chuyển khoản và số tiền. Sau khi chuyển, bấm "Tôi đã chuyển khoản" để thông báo cho shop.</p>
+              <label class="method" for="method-bank">
+                <input id="method-bank" type="radio" name="method" value="bank" {% if payment.method == "bank" %}checked{% endif %}>
+                <div>
+                  <div style="font-weight:700">Chuyển khoản ngân hàng</div>
+                  <div class="muted">Chuyển khoản trước để shop chuẩn bị nhanh hơn. Hiển thị QR khi chọn phương thức này.</div>
+                </div>
+              </label>
 
-    {% if qr_data_uri %}
-      <div style="text-align:center; margin:18px 0;">
-        <img src="{{ qr_data_uri }}" class="img-fluid">
-      </div>
-      <p><strong>Tài khoản:</strong> {{ bank_account }} ({{ bank_name }})</p>
-      <p><strong>Người hưởng:</strong> {{ beneficiary }}</p>
-      <p><strong>Nội dung chuyển khoản:</strong> Thanh toán đơn hàng #{{ order.id }}</p>
-      <p><strong>Số tiền:</strong> {{ order.total_amount|floatformat:0 }} đ</p>
+              <div style="margin-top:6px;">
+                <button type="submit" class="btn" id="confirm-method-button">Xác nhận phương thức</button>
+                <button type="button" class="btn secondary" onclick="window.location.reload()" style="margin-left:8px;">Làm mới</button>
+              </div>
+            </div>
+          </form>
 
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="i_have_transferred">
-        <div>
-          <label>Upload bằng chứng (tùy chọn): <input type="file" name="proof"></label>
+          <hr class="sep">
+
+          <h2 class="section-title">2. Thanh toán chuyển khoản (QR manual)</h2>
+          <p class="muted">Nếu bạn chọn chuyển khoản, trang sẽ hiển thị QR chứa nội dung chuyển khoản và số tiền. Sau khi chuyển, bấm "Tôi đã chuyển khoản" để thông báo cho shop.</p>
+
+          {% if qr_data_uri %}
+            <div class="qr-wrap" id="qr-block">
+              <img src="{{ qr_data_uri }}" alt="QR chuyển khoản" class="img-fluid" />
+              <div class="bank-info">
+                <p><strong>Tài khoản:</strong> {{ bank_account }} — <span class="muted">({{ bank_name }})</span></p>
+                <p><strong>Người hưởng:</strong> {{ beneficiary }}</p>
+                <p><strong>Nội dung:</strong> Thanh toán đơn hàng #{{ order.id }}</p>
+                <p><strong>Số tiền:</strong> {{ order.total_amount|floatformat:0 }} đ</p>
+              </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="confirm-transfer-form">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="i_have_transferred">
+              <div class="file-input">
+                <label for="proof">Upload bằng chứng (tùy chọn):</label>
+                <input id="proof" type="file" name="proof" accept="image/*,application/pdf">
+              </div>
+
+              <div style="margin-top:14px;">
+                <button type="submit" class="btn" id="i-transferred-btn">Tôi đã chuyển khoản</button>
+                <a class="btn secondary" href="{% url 'orders:detail' order.id %}" style="margin-left:8px;">Xem đơn hàng</a>
+              </div>
+            </form>
+          {% else %}
+            <p class="muted">Nhấn chọn "Chuyển khoản ngân hàng" và ấn "Xác nhận phương thức" để xem QR.</p>
+          {% endif %}
+
+          <hr class="sep">
+          <p class="muted">Lưu ý: Đây là QR <strong>manual</strong>. Shop sẽ kiểm tra và xác nhận thủ công sau khi bạn bấm "Tôi đã chuyển khoản".</p>
         </div>
-        <div style="margin-top:12px;">
-          <button type="submit" class="btn">Tôi đã chuyển khoản</button>
-        </div>
-      </form>
-    {% else %}
-      <p class="muted">Nhấn chọn "Chuyển khoản ngân hàng" và ấn "Xác nhận phương thức" để xem QR.</p>
-    {% endif %}
-
-    <hr>
-    <p class="muted">Lưu ý: Đây là QR **manual**. Shop sẽ kiểm tra và xác nhận thủ công sau khi bạn bấm "Tôi đã chuyển khoản".</p>
+      </div>
+    </div>
   </div>
+
+  <!-- Small JS to improve UX (no logic change) -->
+  <script>
+    (function(){
+      // make clicking label highlight selection (native already does it),
+      // simple progressive enhancement: scroll to QR when visible after form submit
+      var qrBlock = document.getElementById('qr-block');
+      if(qrBlock){
+        // if QR exists, scroll a bit into view on load (mobile friendly)
+        setTimeout(function(){
+          qrBlock.scrollIntoView({behavior:'smooth', block:'center'});
+        }, 100);
+      }
+    })();
+  </script>
 </body>
 </html>

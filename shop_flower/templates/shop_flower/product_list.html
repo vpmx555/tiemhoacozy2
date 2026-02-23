@@ -141,41 +141,67 @@
 <!--#######################-->
 
       <div class="row">
-
         {% for flower in flowers %}
         <div class="col-md-4 mb-4">
-
-          <div class="card h-100 shadow-sm position-relative
+            <div class="card h-100 shadow-sm position-relative
                 {% if not flower.total_stock %}out-of-stock{% endif %}">
 
-            {% if not flower.total_stock %}
-                <div class="out-badge">HẾT HÀNG</div>
-            {% endif %}
-
-            <img src="{{ flower.image.url }}" class="card-img-top">
-
-            <div class="card-body text-center">
-
-                <h5>{{ flower.name }}</h5>
-
-                {% if flower.total_stock %}
-                <p class="text-danger fw-bold">
-                    {{ flower.sell_price|floatformat:0 }} VND
-                </p>
-                {% else %}
-                <p class="text-secondary fw-bold">
-                    Hết hàng
-                </p>
+                {% if not flower.total_stock %}
+                    <div class="out-badge">HẾT HÀNG</div>
                 {% endif %}
+
+                <!-- BỌC ẢNH BẰNG LINK -->
+                <a href="{% url 'product_detail' flower.id %}">
+                    {% if flower.image %}
+                    <img src="{{ flower.image.url }}" class="card-img-top" alt="{{ flower.name }}">
+                    {% else %}
+                    <img src="{% static 'shop_flower/images/no-image.png' %}" class="card-img-top">
+                    {% endif %}
+                </a>
+
+                <div class="card-body text-center">
+
+                    <!-- BỌC TÊN BẰNG LINK -->
+                    <h5>
+                    <a href="{% url 'product_detail' flower.id %}" 
+                        class="text-decoration-none text-dark">
+                        {{ flower.name }}
+                    </a>
+                    </h5>
+
+                    {% if flower.total_stock %}
+                    <p class="text-danger fw-bold">
+                        {{ flower.sell_price|floatformat:0 }} VND
+                    </p>
+                    {% else %}
+                    <p class="text-secondary fw-bold">Hết hàng</p>
+                    {% endif %}
+
+                <!-- === CART ACTION (thêm/bớt) === -->
+                <div class="cart-action"
+                    data-id="{{ flower.id }}"
+                    data-name="{{ flower.name }}"
+                    data-price="{{ flower.sell_price }}"
+                    data-image="{% if flower.image %}{{ flower.image.url }}{% else %}{% static 'shop_flower/images/no-image.png' %}{% endif %}">
+                {% if flower.total_stock %}
+                    <button class="btn btn-danger rounded-pill fw-bold w-100 btn-add-cart">
+                    🛒 Thêm vào giỏ
+                    </button>
+                {% else %}
+                    <button class="btn btn-secondary rounded-pill fw-bold w-100" disabled>
+                    HẾT HÀNG
+                    </button>
+                {% endif %}
+                </div>
+                <!-- === /CART ACTION === -->
 
             </div>
             </div>
         </div>
         {% empty %}
-        <p>Không tìm thấy sản phẩm phù hợp.</p>
+            <p>Không tìm thấy sản phẩm phù hợp.</p>
         {% endfor %}
-
-      </div>
+        </div>
 
     </div>
 

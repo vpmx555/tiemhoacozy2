@@ -1,122 +1,175 @@
 {% extends "shop_flower/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
-<div class="container mt-5">
+<style>
+  .product-page { max-width: 1100px; margin: 40px auto; }
+  .product-image { border-radius: 12px; overflow: hidden; background:#fff; display:flex; align-items:center; justify-content:center; min-height: 320px; }
+  .product-image img { max-width:100%; max-height:420px; object-fit:contain; }
+  .sticky-aside { position: sticky; top: 100px; }
+  .price-large { font-size: 1.8rem; }
+  .badge-type { margin-right: 6px; margin-bottom: 6px; }
+  .related-card img { height:140px; object-fit:cover; border-radius:8px; }
+  .product-actions .qty-input { width:110px; }
+  .product-card-clickable { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+  .product-card-clickable:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+</style>
 
-    <div class="row">
+<div class="product-page">
 
-        <!-- IMAGE -->
-        <div class="col-md-5">
-            <div class="border rounded p-3 bg-white">
-                <img 
-                    src="{{ flower.image.url }}" 
-                    class="img-fluid rounded"
-                    alt="{{ flower.name }}">
+  <div class="row gx-4">
+    <!-- IMAGE -->
+    <div class="col-lg-6">
+      <div class="product-image p-3 bg-white shadow-sm">
+        {% if flower.image %}
+          <img src="{{ flower.image.url }}" alt="{{ flower.name }}" loading="lazy">
+        {% else %}
+          <img src="{% static 'shop_flower/images/no-image.png' %}" alt="no image" loading="lazy">
+        {% endif %}
+      </div>
+
+      <!-- small info under image -->
+      <div class="mt-3 d-flex gap-3 align-items-center">
+        <div><strong>Mã SP:</strong> #{{ flower.id }}</div>
+
+        {# Nếu model có field stock thì hiển thị, nếu không có sẽ bỏ qua (không lỗi) #}
+        {% if flower.stock %}
+          <div class="text-success"><strong>Còn:</strong> {{ flower.stock }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Các tag/type của sản phẩm hiện tại -->
+      <div class="mt-3">
+        {% if flower.flower_types.exists %}
+          {% for t in flower.flower_types.all %}
+            <span class="badge bg-outline-secondary badge-type">{{ t.name }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="badge bg-secondary">Chưa phân loại</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- INFO + ADD TO CART (sticky) -->
+    <div class="col-lg-6">
+      <div class="sticky-aside p-4 bg-white shadow-sm rounded">
+
+        <h1 class="h4 fw-bold mb-1">{{ flower.name }}</h1>
+
+        <div class="mb-2">
+          <span class="price-large text-danger fw-bold">
+            {{ flower.sell_price|floatformat:0|intcomma }} đ
+          </span>
+        </div>
+
+        <p class="text-muted mb-2">{% if flower.description %}{{ flower.description|linebreaksbr }}{% endif %}</p>
+
+        <div class="mb-3">
+            <span class="text-success fw-semibold">Còn hàng ({{ flower.stock }})</span>
+        </div>
+
+        <!-- Add to cart block (cart-action giống home.js) -->
+        <div class="product-actions">
+          <div class="row g-2 align-items-center">
+            <div class="col">
+              <div class="cart-action"
+                   data-id="{{ flower.id }}"
+                   data-name="{{ flower.name }}"
+                   data-price="{{ flower.sell_price }}"
+                   data-image="{% if flower.image %}{{ flower.image.url }}{% else %}{% static 'shop_flower/images/no-image.png' %}{% endif %}">
+                <button id="btn-add-cart-detail" class="btn btn-danger w-100 rounded-pill fw-bold btn-add-cart">
+                  🛒 Thêm vào giỏ
+                </button>
+              </div>
             </div>
+          </div>
         </div>
 
-        <!-- flower INFO -->
-        <div class="col-md-7">
-
-            <h2 class="fw-bold">{{ flower.name }}</h2>
-
-            <p class="text-muted mt-2">
-                Danh mục: 
-                <span class="badge bg-success">
-                    {{ flower.category.name }}
-                </span>
-            </p>
-
-            <h3 class="text-danger mt-3">
-                {{ flower.sell_price|floatformat:0 }} đ
-            </h3>
-
-            <hr>
-
-            <p>
-                {{ flower.description }}
-            </p>
-
-            <p class="mt-3">
-                Tình trạng:
-                {% if flower.stock > 0 %}
-                    <span class="text-success fw-bold">
-                        Còn hàng ({{ flower.stock }})
-                    </span>
-                {% else %}
-                    <span class="text-danger fw-bold">
-                        Hết hàng
-                    </span>
-                {% endif %}
-            </p>
-
-            <!-- ADD TO CART -->
-                {% csrf_token %}
-
-                <div class="row mt-4">
-
-                    <div class="col-3">
-                        <input 
-                            type="number"
-                            name="quantity"
-                            value="1"
-                            min="1"
-                            max="{{ flower.stock }}"
-                            class="form-control">
-                    </div>
-
-                    <div class="col-9">
-                        <div class="cart-action"
-                        data-id="{{ flower.id }}"
-                        data-name="{{ flower.name }}"
-                        data-price="{{ flower.sell_price }}"
-                        data-image="{{ flower.image.url }}">
-
-                        <button class="btn btn-danger rounded-pill fw-bold w-100 btn-add-cart">
-                            🛒 Thêm vào giỏ
-                        </button>
-                      </div>
-                    </div>
-
-                    
-
-                </div>
-            </form>
+        <div class="mt-3 small text-muted">
+          Miễn phí giao hàng cho đơn trên 500,000đ. Đổi trả trong 7 ngày (xem chính sách).
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- RELATED flowerS -->
-    <div class="mt-5">
-        <h4>Sản phẩm liên quan</h4>
-        <hr>
+  <!-- RELATED PRODUCTS -->
+  <div class="mt-5">
+    <h4>Sản phẩm liên quan</h4>
+    <div class="row g-3">
+      {% for item in related_products %}
+      <div class="col-md-3">
+        <div class="card h-100 related-card product-card-clickable" onclick="location.href='{% url 'product_detail' item.id %}'">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+          {% else %}
+            <img src="{% static 'shop_flower/images/no-image.png' %}" class="card-img-top" alt="no image">
+          {% endif %}
+          <div class="card-body">
+            <h6 class="mb-1">{{ item.name }}</h6>
+            <div class="mb-2 text-danger fw-bold">{{ item.sell_price|floatformat:0|intcomma }} đ</div>
 
-        <div class="row">
-            {% for item in flower.category.flower_set.all|slice:":4" %}
-                {% if item.id != flower.id %}
-                <div class="col-md-3">
-                    <div class="card h-100 shadow-sm flower-card">
-                        <img 
-                            src="{{ item.image.url }}" 
-                            class="card-img-top"
-                            style="height:180px; object-fit:cover">
+            <!-- show badges of item flower_types -->
+            <div class="mb-2">
+              {% if item.flower_types.exists %}
+                {% for t in item.flower_types.all %}
+                  <span class="badge bg-light text-dark border badge-type">{{ t.name }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="text-muted small">Chưa phân loại</span>
+              {% endif %}
+            </div>
 
-                        <div class="card-body">
-                            <h6>{{ item.name }}</h6>
-                            <p class="text-danger fw-bold">
-                                {{ item.sell_price|floatformat:0 }} đ
-                            </p>
-                            <a href="{% url 'flower_detail' item.id %}"
-                               class="btn btn-sm btn-outline-primary w-100">
-                                Xem
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            {% endfor %}
+            <div class="d-grid">
+              <a href="{% url 'product_detail' item.id %}" class="btn btn-danger w-100 rounded-pill fw-bold btn-sm">Xem</a>
+            </div>
+          </div>
         </div>
+      </div>
+      {% empty %}
+        <div class="col-12"><p class="text-muted">Không tìm thấy sản phẩm liên quan.</p></div>
+      {% endfor %}
     </div>
-
+  </div>
 </div>
+
+<!-- JS: ensure quantity on detail page used when adding to cart -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const addBtn = document.getElementById('btn-add-cart-detail');
+  const qtyInput = document.getElementById('pd-qty');
+
+  if (addBtn && qtyInput) {
+    addBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const box = addBtn.closest('.cart-action');
+      if (!box) return;
+
+      let q = parseInt(qtyInput.value) || 1;
+      if (q < 1) q = 1;
+      const id = String(box.dataset.id);
+
+      const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+
+      cart[id] = {
+        id: id,
+        name: box.dataset.name,
+        price: parseFloat(box.dataset.price),
+        qty: q,
+        image: box.dataset.image
+      };
+
+      sessionStorage.setItem('cart', JSON.stringify(cart));
+
+      if (typeof updateBadge === 'function') updateBadge();
+      if (typeof renderCartModal === 'function') renderCartModal();
+      if (typeof syncAllCards === 'function') syncAllCards();
+
+      const original = addBtn.innerHTML;
+      addBtn.innerHTML = 'Đã thêm ✓';
+      setTimeout(() => addBtn.innerHTML = original, 1200);
+    });
+  }
+});
+</script>
 {% endblock %}

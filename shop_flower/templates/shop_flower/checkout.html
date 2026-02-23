@@ -151,52 +151,57 @@
     
     </div>
 
-<!-- voucher modal unchanged -->
-<div class="modal fade" id="voucherModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+<div class="modal fade" id="voucherModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content">
 
       <div class="modal-header">
         <h5 class="modal-title">Chọn voucher</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body bg-light"> <div class="row row-cols-1 row-cols-sm-2 g-3">
 
-        <div class="voucher-item mb-3 p-2 border rounded d-flex align-items-center"
-             onclick="selectVoucher('freeship')" style="cursor: pointer;">
-
-            <img
-                src="/static/shop_flower/vouchers/freeship.png"
-                width="70"
-                class="me-3 rounded"
-            >
-
-            <div>
-                <div class="fw-bold">Giao hàng miễn phí</div>
-                <small class="text-muted">Áp dụng toàn quốc</small>
+          <div class="col">
+            <div class="card h-100 shadow-sm voucher-item border-0" onclick="selectVoucher('freeship')" style="cursor: pointer;">
+              <img
+                 src="/static/shop_flower/vouchers/freeship.jpg"
+                 class="card-img-top"
+                 alt="Freeship Voucher"
+                 style="object-fit: cover; height: 150px;"
+              >
+              <div class="card-body text-center p-2">
+                <h6 class="card-title mb-1 fw-bold text-dark" style="font-size: 0.9rem;">Giao hàng miễn phí</h6>
+                <p class="card-text small text-muted mb-0" style="font-size: 0.8rem;">Áp dụng toàn quốc</p>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div class="voucher-item p-2 border rounded d-flex align-items-center"
-             onclick="selectVoucher('discount10')" style="cursor: pointer;">
-
-            <img
-                src="/static/shop_flower/vouchers/discount10.png"
-                width="70"
-                class="me-3 rounded"
-            >
-
-            <div>
-                <div class="fw-bold">Giảm 10% đơn hàng đầu tiên</div>
-                <small class="text-muted">Tối đa 50.000đ</small>
+          <div class="col">
+            <div class="card h-100 shadow-sm voucher-item border-0" onclick="selectVoucher('discount10')" style="cursor: pointer;">
+              <img
+                 src="/static/shop_flower/vouchers/discount10.jpg"
+                 class="card-img-top"
+                 alt="Discount Voucher"
+                 style="object-fit: cover; height: 150px;"
+              >
+              <div class="card-body text-center p-2">
+                <h6 class="card-title mb-1 fw-bold text-dark" style="font-size: 0.9rem;">Giảm 10% đơn đầu tiên</h6>
+                <p class="card-text small text-muted mb-0" style="font-size: 0.8rem;">Tối đa 50.000đ</p>
+              </div>
             </div>
-        </div>
+          </div>
 
-      </div>
-    </div>
+        </div> </div> </div>
   </div>
 </div>
+
+<style>
+  .voucher-item:hover {
+    transform: translateY(-3px);
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; /* Tăng shadow khi hover */
+  }
+</style>
 
 <!-- HIDDEN form chỉ để render CSRF token và tạo cookie -->
 <form id="csrf-form" style="display:none;">
