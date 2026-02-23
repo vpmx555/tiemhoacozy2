@@ -1,12 +1,24 @@
 # shop_flower/emails.py
+import os
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+
 def send_order_confirmation_email(order, items, payment_url=None):
+    """
+    Gửi email xác nhận đơn hàng bằng SendGrid Web API
+    (không dùng SMTP -> Railway không bị timeout)
+    """
+
+    if not order.email:
+        return
+
     subject = f"[Tiệm Hoa Cozy] Xác nhận đơn hàng #{order.id}"
     from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = [order.email] if order.email else []
+    to_email = order.email
 
     context = {
         "order": order,
@@ -14,10 +26,25 @@ def send_order_confirmation_email(order, items, payment_url=None):
         "payment_url": payment_url,
     }
 
-    html_content = render_to_string("shop_flower/order_confirmation.html", context)
-    text_content = render_to_string("shop_flower/order_confirmation_text.txt", context) if False else ""
+    html_content = render_to_string(
+        "shop_flower/order_confirmation.html",
+        context,
+    )
 
-    if to_email:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send(fail_silently=True)
+    try:
+        message = Mail(
+            from_email=from_email,
+            to_emails=to_email,
+            subject=subject,
+            html_content=html_content,
+        )
+
+        sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
+        response = sg.send(message)
+
+        # debug nhẹ
+        print("SendGrid status:", response.status_code)
+
+    except Exception as e:
+        # không crash production
+        print("SENDGRID ERROR:", e)

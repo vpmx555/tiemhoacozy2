@@ -160,14 +160,21 @@ SITE_URL = "http://127.0.0.1:8000"
 
 # settings.py
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = "no-reply@tiemhoacozy.com"
+SERVER_EMAIL = "no-reply@tiemhoacozy.com"
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#EMAIL_HOST = 'smtp.sendgrid.net'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'tiemhoacozy@gmail.com'
-EMAIL_HOST_PASSWORD = 'sams vzve dzhe htbq'
+#EMAIL_HOST_USER = 'apikey'
+#EMAIL_HOST_PASSWORD = 'REMOVED'
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "no-reply@tiemhoacozy.com",
+)
 
 import cloudinary
 import cloudinary.uploader
