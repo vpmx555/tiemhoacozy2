@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 from .models import Order, OrderItem
 import json
 from decimal import Decimal
-from .services.email_service import send_order_confirmation_email
+from .emails import send_order_confirmation_email
 from .models import Flower, FlowerType
 from django.db.models import Q
 from shop_flower.services.vietqr_api import generate_vietqr_image_url
@@ -256,7 +256,7 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Order, OrderItem, Flower
-from .services.email_service import send_order_confirmation_email
+from .emails import send_order_confirmation_email
 from django.urls import reverse
 
 def checkout(request):

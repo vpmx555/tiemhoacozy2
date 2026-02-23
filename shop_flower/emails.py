@@ -20,6 +20,8 @@ def send_order_confirmation_email(order, items, payment_url=None):
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = order.email
 
+    print("đã gửi")
+
     context = {
         "order": order,
         "items": items,
@@ -27,7 +29,7 @@ def send_order_confirmation_email(order, items, payment_url=None):
     }
 
     html_content = render_to_string(
-        "shop_flower/order_confirmation.html",
+        "email/order_confirmation.html",
         context,
     )
 
