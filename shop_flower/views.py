@@ -336,15 +336,18 @@ def checkout(request):
             flower = get_object_or_404(Flower, id=flower_id)
             price = Decimal(flower.sell_price)
 
+            item_total = price * qty  # ⭐ TÍNH TOTAL TỪNG ITEM
+
             order_item = OrderItem.objects.create(
                 order=order,
                 flower=flower,
                 quantity=qty,
-                price=price
+                price=price,
+                total=item_total  # ⭐ LƯU VÀO DB
             )
 
             order_items.append(order_item)
-            total += price * qty
+            total += item_total
 
         # 3) VOUCHER
         discount = Decimal("0")

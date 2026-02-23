@@ -164,6 +164,7 @@ class OrderItem(models.Model):
     flower = models.ForeignKey(Flower, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    total = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 
 
 class FlowerSalesSummary(models.Model):
