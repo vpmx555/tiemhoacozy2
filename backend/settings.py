@@ -179,6 +179,12 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "dmvsdbvjj",
+    "API_KEY": "925496818226517",
+    "API_SECRET": "WyjYs9FMK-ujz6fk1sbtdw7aKR4",
+}
+
 cloudinary.config(
     cloud_name="dmvsdbvjj",
     api_key="925496818226517",
