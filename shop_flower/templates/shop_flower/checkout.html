@@ -151,6 +151,7 @@
     
     </div>
 
+<!-- voucher modal unchanged -->
 <div class="modal fade" id="voucherModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -196,6 +197,53 @@
     </div>
   </div>
 </div>
+
+<!-- HIDDEN form chỉ để render CSRF token và tạo cookie -->
+<form id="csrf-form" style="display:none;">
+    {% csrf_token %}
+</form>
+
+<script>
+/* CSRF helper: lấy token từ input hoặc cookie, gán vào window.CSRF_TOKEN để checkout.js dùng */
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // cookie format "name=value"
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// try lấy từ hidden input (rendered by {% csrf_token %})
+let csrftoken = null;
+const input = document.querySelector('#csrf-form input[name="csrfmiddlewaretoken"]');
+if (input) csrftoken = input.value;
+
+// fallback: lấy từ cookie
+if (!csrftoken) csrftoken = getCookie('csrftoken');
+
+window.CSRF_TOKEN = csrftoken;
+
+// Nếu checkout.js dùng fetch, mình khuyên các fetch POST phải gửi header "X-CSRFToken": window.CSRF_TOKEN
+// Ví dụ (nếu bạn muốn đặt global fetch wrapper):
+/*
+const _origFetch = window.fetch;
+window.fetch = function(input, init = {}) {
+    init.headers = init.headers || {};
+    if (!init.headers['X-CSRFToken'] && window.CSRF_TOKEN) {
+        init.headers['X-CSRFToken'] = window.CSRF_TOKEN;
+    }
+    return _origFetch(input, init);
+};
+*/
+</script>
 
 <script src="{% static 'shop_flower/js/checkout.js' %}"></script>
 <script src="{% static 'shop_flower/js/validate.js' %}"></script>
