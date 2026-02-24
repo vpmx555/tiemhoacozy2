@@ -1,5 +1,5 @@
-{% if order.status == "pending" %}
+{% if order.status == "chờ duyệt" %}
 ⏳ Đơn hàng đang chờ xác nhận
-{% elif order.status == "confirmed" %}
+{% elif order.status == "xác nhận" %}
 ✅ Đặt hàng thành công
 {% endif %}

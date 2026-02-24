@@ -1,175 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 {% load humanize %}
-<html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-body{
-    margin:0;
-    padding:40px 0;
-    background:linear-gradient(180deg,#faf7f8 0%, #f6fbfb 100%);
-}
-.vf{
-    font-family:"Noto Sans","Roboto","Segoe UI","Helvetica Neue",Arial,sans-serif;
-    color:#444;
-}
-@media screen and (max-width:480px){
-    .inner{padding:20px !important;}
-}
+  /* Reset cơ bản cho email clients */
+  img { border:0; outline:none; text-decoration:none; -ms-interpolation-mode:bicubic; display:block; max-width:100%; height:auto; }
+  a { color:inherit; text-decoration:none; }
+  table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  /* Font stack an toàn cho tiếng Việt */
+  .vf { font-family: "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif; color:#444444; }
+  /* Mobile styles */
+  @media only screen and (max-width:480px) {
+    .outer { padding:12px !important; }
+    .card { border-radius:12px !important; }
+    .inner { padding:16px !important; }
+    .title { font-size:20px !important; }
+    .order-table td { padding:8px 6px !important; }
+    .cta { display:block !important; width:90% !important; box-sizing:border-box; padding:14px 10px !important; }
+    .two-col { display:block !important; width:100% !important; }
+  }
 </style>
 </head>
+<body style="margin:0;padding:20px 0;background:#faf7f8;" class="vf">
 
-<body class="vf">
+<center style="width:100%;background:linear-gradient(180deg,#faf7f8 0%, #f6fbfb 100%);">
 
-<table width="100%" cellpadding="0" cellspacing="0" align="center">
-<tr>
-<td align="center">
+  <!-- WRAPPER (có padding bên ngoài) -->
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+      <td align="center" style="padding:16px;" class="outer">
 
-    <!-- WRAPPER tạo viền -->
-    <table width="620" cellpadding="0" cellspacing="0"
-           style="max-width:95%;
-                  background:linear-gradient(180deg,#f9dfe4,#dff4f2);
-                  border-radius:18px;
-                  padding:10px;">  <!-- độ dày viền -->
-
-        <tr>
-        <td>
-
-            <!-- CARD chính -->
-            <table width="100%" cellpadding="0" cellspacing="0"
-                   style="background:#ffffff;
-                          border-radius:14px;
-                          overflow:hidden;
-                          box-shadow:0 10px 30px rgba(0,0,0,0.06);">
-
+        <!-- Viền ngoài (wrapper với gradient) -->
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:620px">
+          <tr>
+            <td style="background:linear-gradient(180deg,#f9dfe4,#dff4f2);border-radius:18px;padding:8px;">
+              
+              <!-- CARD chính (white box) -->
+              <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                     style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.06);">
+                
                 <!-- BANNER -->
                 <tr>
-                    <td>
-                        <img src="https://res.cloudinary.com/dmvsdbvjj/image/upload/v1771748206/banner_al2qwb.jpg"
-                             width="600"
-                             style="display:block;width:100%;height:auto;">
-                    </td>
+                  <td style="line-height:0;">
+                    <img
+                      src="https://res.cloudinary.com/dmvsdbvjj/image/upload/v1771748206/banner_al2qwb.jpg"
+                      alt="Banner Tiệm Hoa Cozy"
+                      width="600"
+                      style="display:block;width:100%;height:auto;max-width:600px;"
+                      class="banner">
+                  </td>
                 </tr>
 
                 <!-- TITLE -->
                 <tr>
-                    <td align="center" style="padding:22px 40px 6px 40px;">
-                        <div style="font-size:22px;
-                                    font-weight:700;
-                                    color:#e76f81;">
-                            XÁC NHẬN ĐƠN HÀNG
-                        </div>
-                    </td>
+                  <td align="center" style="padding:22px 40px 6px 40px;" class="inner">
+                    <div class="title" style="font-size:22px;font-weight:700;color:#e76f81;line-height:1.1;">
+                      XÁC NHẬN ĐƠN HÀNG
+                    </div>
+                  </td>
                 </tr>
 
-                <tr><td height="10"></td></tr>
+                <tr><td height="10" style="line-height:10px;">&nbsp;</td></tr>
 
                 <!-- GREETING -->
                 <tr>
-                    <td class="inner" style="padding:0 40px;">
-                        Xin chào <strong>{{ order.customer_name }}</strong>,<br><br>
-                        Cảm ơn bạn đã đặt hoa tại <strong>Tiệm Hoa Cozy</strong>.
-                        Đơn hàng của bạn đã được ghi nhận thành công.
-                    </td>
+                  <td class="inner" style="padding:0 40px 0 40px;font-size:15px;color:#444444;">
+                    Xin chào <strong>{{ order.customer_name }}</strong>,<br><br>
+                    Cảm ơn bạn đã đặt hoa tại <strong>Tiệm Hoa Cozy</strong>.
+                    Đơn hàng của bạn đã được ghi nhận thành công.
+                  </td>
                 </tr>
 
-                <tr><td height="20"></td></tr>
+                <tr><td height="20" style="line-height:20px;">&nbsp;</td></tr>
 
                 <!-- ORDER BOX -->
                 <tr>
-                    <td class="inner" style="padding:0 40px;">
-                        <table width="100%" cellpadding="10" cellspacing="0"
-                               style="background:linear-gradient(180deg,#fff7f9,#f8fffd);
-                                      border-radius:10px;
-                                      border:1px solid #f0e7e9;">
+                  <td class="inner" style="padding:0 40px 0 40px;">
+                    <table width="100%" cellpadding="10" cellspacing="0" role="presentation"
+                           class="order-table"
+                           style="background:linear-gradient(180deg,#fff7f9,#f8fffd);border-radius:10px;border:1px solid #f0e7e9;font-size:14px;color:#6b6b6b;">
+                      
+                      <tr style="font-weight:700;color:#7a7a7a;">
+                        <td style="padding:10px 8px;">Sản phẩm</td>
+                        <td align="center" style="padding:10px 8px;">SL</td>
+                        <td align="right" style="padding:10px 8px;">Thành tiền</td>
+                      </tr>
 
-                            <tr style="font-weight:700;color:#7a7a7a;">
-                                <td>Sản phẩm</td>
-                                <td align="center">SL</td>
-                                <td align="right">Thành tiền</td>
-                            </tr>
+                      {% for item in items %}
+                      <tr>
+                        <td style="padding:8px 8px;border-top:1px solid rgba(0,0,0,0.03);">{{ item.flower.name }}</td>
+                        <td align="center" style="padding:8px 8px;border-top:1px solid rgba(0,0,0,0.03);">{{ item.quantity }}</td>
+                        <td align="right" style="padding:8px 8px;border-top:1px solid rgba(0,0,0,0.03);">{{ item.total|intcomma }} đ</td>
+                      </tr>
+                      {% endfor %}
 
-                            {% for item in items %}
-                            <tr>
-                                <td>{{ item.flower.name }}</td>
-                                <td align="center">{{ item.quantity }}</td>
-                                <td align="right">{{ item.total|intcomma }} đ</td>
-                            </tr>
-                            {% endfor %}
-
-                        </table>
-                    </td>
+                    </table>
+                  </td>
                 </tr>
 
-                <tr><td height="20"></td></tr>
+                <tr><td height="20" style="line-height:20px;">&nbsp;</td></tr>
 
                 <!-- TOTAL -->
                 <tr>
-                    <td class="inner" style="padding:0 40px;">
-                        <table width="100%">
-                            <tr>
-                                <td>Tạm tính:</td>
-                                <td align="right">{{ order.sub_total|floatformat:0|intcomma }} đ</td>
-                            </tr>
-                            <tr>
-                                <td>Giảm giá:</td>
-                                <td align="right">- {{ order.discount_amount|floatformat:0|intcomma }} đ</td>
-                            </tr>
-                            <tr>
-                                <td>Phí vận chuyển:</td>
-                                <td align="right">{{ order.shipping_fee|floatformat:0|intcomma }} đ</td>
-                            </tr>
-                            <tr style="font-size:18px;font-weight:700;color:#e76f81;">
-                                <td>TỔNG THANH TOÁN:</td>
-                                <td align="right">{{ order.total_amount|floatformat:0|intcomma }} đ</td>
-                            </tr>
-                        </table>
-                    </td>
+                  <td class="inner" style="padding:0 40px 0 40px;">
+                    <table width="100%" cellpadding="6" cellspacing="0" role="presentation" style="font-size:15px;color:#444;">
+                      <tr>
+                        <td>Tạm tính:</td>
+                        <td align="right">{{ order.sub_total|floatformat:0|intcomma }} đ</td>
+                      </tr>
+                      <tr>
+                        <td>Giảm giá:</td>
+                        <td align="right">- {{ order.discount_amount|floatformat:0|intcomma }} đ</td>
+                      </tr>
+                      <tr>
+                        <td>Phí vận chuyển:</td>
+                        <td align="right">{{ order.shipping_fee|floatformat:0|intcomma }} đ</td>
+                      </tr>
+                      <tr style="font-size:18px;font-weight:700;color:#e76f81;">
+                        <td>TỔNG THANH TOÁN:</td>
+                        <td align="right">{{ order.total_amount|floatformat:0|intcomma }} đ</td>
+                      </tr>
+                    </table>
+                  </td>
                 </tr>
 
-                <tr><td height="25"></td></tr>
+                <tr><td height="25" style="line-height:25px;">&nbsp;</td></tr>
 
-                <!-- BUTTON -->
+                <!-- BUTTON (nút responsive, tăng target trên mobile) -->
                 <tr>
-                    <td align="center">
-                        <a href="{{ payment_url }}"
-                           style="background:linear-gradient(90deg,#f9cfd6,#dff4f2);
-                                  color:#333;
-                                  padding:12px 28px;
-                                  border-radius:12px;
-                                  font-weight:700;
-                                  text-decoration:none;
-                                  display:inline-block;">
-                            THANH TOÁN ĐƠN HÀNG
-                        </a>
-                    </td>
+                  <td align="center" style="padding:0 40px 30px 40px;">
+                    <!-- Dùng <a> có inline-block để hầu hết client hỗ trợ -->
+                    <a href="{{ payment_url }}"
+                       class="cta"
+                       style="background:linear-gradient(90deg,#f9cfd6,#dff4f2);color:#333;padding:12px 28px;border-radius:12px;font-weight:700;text-decoration:none;display:inline-block;min-width:200px;">
+                      THANH TOÁN ĐƠN HÀNG
+                    </a>
+                  </td>
                 </tr>
 
-                <tr><td height="25"></td></tr>
+                <tr><td height="10" style="line-height:10px;">&nbsp;</td></tr>
 
                 <!-- FOOTER -->
                 <tr>
-                    <td align="center"
-                        style="background:linear-gradient(90deg,#f9dde3,#e8f9f7);
-                               padding:18px;
-                               font-size:13px;">
-                        <strong>Tiệm Hoa Cozy © 2026</strong><br>
-                        Cảm ơn bạn đã tin tưởng chúng tôi 🌷
-                    </td>
+                  <td align="center" style="background:linear-gradient(90deg,#f9dde3,#e8f9f7);padding:18px;font-size:13px;">
+                    <strong>Tiệm Hoa Cozy © 2026</strong><br>
+                    Cảm ơn bạn đã tin tưởng chúng tôi 🌷
+                  </td>
                 </tr>
 
-            </table>
-            <!-- END CARD -->
+              </table>
+              <!-- END CARD -->
 
-        </td>
-        </tr>
-    </table>
-    <!-- END WRAPPER -->
+            </td>
+          </tr>
+        </table>
+        <!-- END WRAPPER -->
 
-</td>
-</tr>
-</table>
+      </td>
+    </tr>
+  </table>
 
+</center>
 </body>
 </html>
