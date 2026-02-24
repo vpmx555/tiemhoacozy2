@@ -55,7 +55,7 @@ def send_new_order_notify_admin(order, items):
     Gửi email báo admin có đơn hàng mới (ngay khi khách đặt)
     """
 
-    admin_email = getattr(settings, "ADMIN_EMAIL", None)
+    admin_email = "hthanh1412004@gmail.com"
 
     if not admin_email:
         print("ADMIN_EMAIL not set")
