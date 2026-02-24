@@ -50,3 +50,41 @@ def send_order_confirmation_email(order, items, payment_url=None):
     except Exception as e:
         # không crash production
         print("SENDGRID ERROR:", e)
+def send_new_order_notify_admin(order, items):
+    """
+    Gửi email báo admin có đơn hàng mới (ngay khi khách đặt)
+    """
+
+    admin_email = getattr(settings, "ADMIN_EMAIL", None)
+
+    if not admin_email:
+        print("ADMIN_EMAIL not set")
+        return
+
+    subject = f"[Tiệm Hoa Cozy] Đơn hàng mới #{order.id}"
+
+    context = {
+        "order": order,
+        "items": items,
+    }
+
+    html_content = render_to_string(
+        "email/new_order_admin.html",
+        context,
+    )
+
+    try:
+        message = Mail(
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to_emails=admin_email,
+            subject=subject,
+            html_content=html_content,
+        )
+
+        sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
+        response = sg.send(message)
+
+        print("New order admin mail:", response.status_code)
+
+    except Exception as e:
+        print("NEW ORDER ADMIN MAIL ERROR:", e)

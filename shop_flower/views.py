@@ -5,7 +5,10 @@ from django.views.decorators.http import require_POST
 from .models import Order, OrderItem
 import json
 from decimal import Decimal
-from .emails import send_order_confirmation_email
+from .emails import (
+    send_order_confirmation_email,
+    send_new_order_notify_admin
+)
 from .models import Flower, FlowerType
 from django.db.models import Q
 from shop_flower.services.vietqr_api import generate_vietqr_image_url
@@ -384,7 +387,7 @@ def checkout(request):
             )
             # Sửa hàm send_order_confirmation_email để nhận payment_url
             send_order_confirmation_email(order, order_items, payment_url=payment_url)
-
+            send_new_order_notify_admin(order, order_items)
         # 8) SAVE SESSION
         request.session["order_id"] = order.id
 
@@ -392,7 +395,7 @@ def checkout(request):
             "success": True,
             "order_id": order.id
         })
-
+    
     return render(request, "shop_flower/checkout.html")
 
 

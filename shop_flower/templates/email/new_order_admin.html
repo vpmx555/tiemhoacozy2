@@ -1,0 +1,29 @@
+<h2>Đơn hàng mới</h2>
+
+<p><b>Mã đơn:</b> #{{ order.id }}</p>
+<p><b>Khách:</b> {{ order.customer_name }}</p>
+<p><b>Phone:</b> {{ order.phone }}</p>
+<p><b>Email:</b> {{ order.email }}</p>
+<p><b>Địa chỉ:</b> {{ order.delivery_address }}</p>
+
+<hr>
+
+<h3>Sản phẩm</h3>
+<ul>
+{% for item in items %}
+    <li>
+        {{ item.flower.name }} × {{ item.quantity }}
+        ({{ item.price }}đ)
+    </li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<p><b>Tạm tính:</b> {{ order.sub_total }}đ</p>
+<p><b>Phí ship:</b> {{ order.shipping_fee }}đ</p>
+<p><b>Giảm:</b> {{ order.discount_amount }}đ</p>
+
+<h3>TỔNG: {{ order.total_amount }}đ</h3>
+
+<p>Vui lòng xử lý đơn.</p>
