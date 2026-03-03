@@ -33,9 +33,9 @@ def home(request):
 
     flowers_type_1 = (
         base_flowers
-        .filter(flower_types__id=1)   # ✔ M2M: trong list có id=1
-        .distinct()                  # ✔ tránh duplicate do JOIN
-        [:8]                          # ✔ tối đa 8
+        .filter(flower_types__id=1)
+        .order_by("id")   # id nhỏ nhất = tạo sớm nhất
+        .distinct()[:8]
     )
 
     flowers_type_4 = (
