@@ -172,7 +172,7 @@
 
                     {% if flower.total_stock %}
                     <p class="text-danger fw-bold">
-                        {{ flower.sell_price|floatformat:0 }} VND
+                        {{ flower.sell_price|floatformat:0|intcomma }} VND
                     </p>
                     {% else %}
                     <p class="text-secondary fw-bold">Hết hàng</p>
@@ -182,7 +182,7 @@
                 <div class="cart-action"
                     data-id="{{ flower.id }}"
                     data-name="{{ flower.name }}"
-                    data-price="{{ flower.sell_price|floatformat:0|intcomma }}"
+                    data-price="{{ flower.sell_price }}"
                     data-image="{% if flower.image %}{{ flower.image.url }}{% else %}{% static 'shop_flower/images/no-image.png' %}{% endif %}">
                 {% if flower.total_stock %}
                     <button class="btn btn-danger rounded-pill fw-bold w-100 btn-add-cart">
