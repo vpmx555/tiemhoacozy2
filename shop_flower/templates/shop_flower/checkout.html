@@ -15,10 +15,56 @@
         background-color: #db3744 !important;
         color: white !important;
         border: none;
+        padding: 0.6rem 1rem;
     }
     .cozy-btn:hover {
         background-color: #c02c38 !important;
         color: white !important;
+    }
+
+    /* Responsive tweaks */
+    .voucher-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-top-left-radius: .375rem;
+        border-top-right-radius: .375rem;
+    }
+
+    .cart-item-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    /* Touch targets on small screens */
+    @media (max-width: 576px) {
+        .cozy-btn {
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+        }
+        .voucher-item img {
+            height: 120px;
+        }
+        .card-body .form-label {
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Small visual improvements */
+    .voucher-item:hover {
+        transform: translateY(-3px);
+        transition: transform 0.2s ease-in-out;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+
+    /* Truncate long product names in table */
+    .product-name {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
 
@@ -26,9 +72,10 @@
 
   <h3 class="mb-4 cozy-text fw-bold">🧾 Thanh toán</h3>
 
-  <div class="row">
+  <div class="row g-3">
 
-    <div class="col-5">
+    <!-- Thay col-5 / col-7 bằng responsive cols: trên mobile thành full-width -->
+    <div class="col-md-5 col-12 order-1">
         <div class="card">
             <div class="card-header cozy-bg fw-bold">
                 Thông tin giao hàng
@@ -44,6 +91,9 @@
                         required
                         minlength="2"
                         placeholder="Nguyễn Văn A"
+                        autocomplete="name"
+                        aria-label="Họ tên người nhận"
+                        maxlength="80"
                     >
                     <small class="text-danger d-none" id="err-name"></small>
                 </div>
@@ -55,8 +105,12 @@
                         class="form-control"
                         required
                         type="tel"
+                        inputmode="tel"
                         pattern="^(0[0-9]{9})$"
                         placeholder="0xxxxxxxxx"
+                        autocomplete="tel"
+                        aria-label="Số điện thoại"
+                        maxlength="11"
                     >
                     <small class="text-danger d-none" id="err-phone"></small>
                 </div>
@@ -68,6 +122,8 @@
                         class="form-control"
                         type="email"
                         placeholder="email@gmail.com"
+                        autocomplete="email"
+                        aria-label="Email"
                     >
                     <small class="text-danger d-none" id="err-email"></small>
                 </div>
@@ -80,6 +136,7 @@
                         rows="2"
                         required
                         minlength="10"
+                        aria-label="Địa chỉ giao hàng"
                     ></textarea>
                     <small class="text-danger d-none" id="err-address"></small>
                 </div>
@@ -90,34 +147,36 @@
                         id="note"
                         class="form-control"
                         rows="2"
+                        aria-label="Ghi chú"
                     ></textarea>
                 </div>
             </div>
         </div>
     </div>
 
-  <div class="col-7">
+  <div class="col-md-7 col-12 order-2">
     <div class="card mb-4">
         <div class="card-header cozy-bg fw-bold">
         Giỏ hàng của bạn
         </div>
 
-
         <div class="card-body p-0">
-        <table class="table mb-0 align-middle">
-        <thead>
-        <tr>
-        <th></th>
-        <th>Hoa</th>
-        <th>Giá</th>
-        <th>Số lượng</th>
-        <th>Tạm tính</th>
-        </tr>
-        </thead>
-        <tbody id="checkout-cart"></tbody>
-        </table>
+          <!-- table-responsive để trên mobile có thể scroll ngang nếu cần -->
+          <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+            <thead>
+            <tr>
+            <th></th>
+            <th>Hoa</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tạm tính</th>
+            </tr>
+            </thead>
+            <tbody id="checkout-cart"></tbody>
+            </table>
+          </div>
         </div>
-
 
         <div class="card-footer text-end">
         <strong>
@@ -144,19 +203,20 @@
             </div>
         </div>
 
-        <button id="btn-order" class="btn cozy-btn rounded-pill fw-bold w-100">
+        <button id="btn-order" class="btn cozy-btn rounded-pill fw-bold w-100" aria-label="Đặt hàng">
                 ✅ Đặt hàng
         </button>
     </div>
     
     </div>
 
+<!-- Modal voucher: modal-fullscreen-sm-down để fullscreen trên màn hình nhỏ -->
 <div class="modal fade" id="voucherModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down"> <div class="modal-content">
 
       <div class="modal-header">
         <h5 class="modal-title">Chọn voucher</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
 
       <div class="modal-body bg-light"> <div class="row row-cols-1 row-cols-sm-2 g-3">
@@ -164,10 +224,9 @@
           <div class="col">
             <div class="card h-100 shadow-sm voucher-item border-0" onclick="selectVoucher('freeship')" style="cursor: pointer;">
               <img
-                 src="/static/shop_flower/vouchers/freeship.jpg"
-                 class="card-img-top"
+                 src="{% static 'shop_flower/vouchers/freeship.jpg' %}"
+                 class="card-img-top img-fluid"
                  alt="Freeship Voucher"
-                 style="object-fit: cover; height: 150px;"
               >
               <div class="card-body text-center p-2">
                 <h6 class="card-title mb-1 fw-bold text-dark" style="font-size: 0.9rem;">Giao hàng miễn phí</h6>
@@ -179,10 +238,9 @@
           <div class="col">
             <div class="card h-100 shadow-sm voucher-item border-0" onclick="selectVoucher('discount10')" style="cursor: pointer;">
               <img
-                 src="/static/shop_flower/vouchers/discount10.jpg"
-                 class="card-img-top"
+                 src="{% static 'shop_flower/vouchers/discount10.jpg' %}"
+                 class="card-img-top img-fluid"
                  alt="Discount Voucher"
-                 style="object-fit: cover; height: 150px;"
               >
               <div class="card-body text-center p-2">
                 <h6 class="card-title mb-1 fw-bold text-dark" style="font-size: 0.9rem;">Giảm 10% đơn đầu tiên</h6>
@@ -194,14 +252,6 @@
         </div> </div> </div>
   </div>
 </div>
-
-<style>
-  .voucher-item:hover {
-    transform: translateY(-3px);
-    transition: transform 0.2s ease-in-out;
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; /* Tăng shadow khi hover */
-  }
-</style>
 
 <!-- HIDDEN form chỉ để render CSRF token và tạo cookie -->
 <form id="csrf-form" style="display:none;">
@@ -236,18 +286,38 @@ if (!csrftoken) csrftoken = getCookie('csrftoken');
 
 window.CSRF_TOKEN = csrftoken;
 
-// Nếu checkout.js dùng fetch, mình khuyên các fetch POST phải gửi header "X-CSRFToken": window.CSRF_TOKEN
-// Ví dụ (nếu bạn muốn đặt global fetch wrapper):
-/*
-const _origFetch = window.fetch;
-window.fetch = function(input, init = {}) {
-    init.headers = init.headers || {};
-    if (!init.headers['X-CSRFToken'] && window.CSRF_TOKEN) {
-        init.headers['X-CSRFToken'] = window.CSRF_TOKEN;
+/* Chọn voucher: set text và đóng modal (Bootstrap 5) */
+function selectVoucher(code) {
+    let label = '';
+    if (code === 'freeship') label = 'Giao hàng miễn phí';
+    else if (code === 'discount10') label = 'Giảm 10% (tối đa 50.000đ)';
+    else label = code;
+
+    document.getElementById('selected-voucher').textContent = label;
+
+    // đóng modal
+    try {
+        const voucherModalEl = document.getElementById('voucherModal');
+        const modalInstance = bootstrap.Modal.getInstance(voucherModalEl) || new bootstrap.Modal(voucherModalEl);
+        modalInstance.hide();
+    } catch (err) {
+        console.warn('Không thể đóng modal tự động:', err);
     }
-    return _origFetch(input, init);
-};
-*/
+}
+
+/* Gợi ý: nếu bạn muốn fetch POST luôn kèm X-CSRFToken, có thể bật wrapper fetch này.
+   Nếu checkout.js đã xử lý fetch/axios, không cần dùng. */
+if (typeof window.fetch === 'function') {
+    const _origFetch = window.fetch;
+    window.fetch = function(input, init = {}) {
+        init.headers = init.headers || {};
+        // chỉ set header nếu chưa có
+        if (!init.headers['X-CSRFToken'] && window.CSRF_TOKEN) {
+            init.headers['X-CSRFToken'] = window.CSRF_TOKEN;
+        }
+        return _origFetch(input, init);
+    };
+}
 </script>
 
 <script src="{% static 'shop_flower/js/checkout.js' %}"></script>

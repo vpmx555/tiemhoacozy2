@@ -19,122 +19,146 @@
     
 </head>
 
+<style>
+  /* Cart badge chung */
+  .btn-cart, .btn-cart-mobile { position: relative; }
+  .cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    padding: 0 4px;
+  }
+
+  /* Mobile: mở rộng touch target */
+  .btn-cart-mobile {
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  /* Khi badge có visually-hidden (JS chưa load), hiển thị none */
+  .btn-cart-mobile .visually-hidden { position: static; width: auto; height: auto; display: inline-block; padding-left:6px; }
+
+  /* Mobile category list spacing */
+  .mobile-category-list .nav-link { padding: 8px 0; color: #333; }
+
+  /* Tùy chỉnh nhỏ để tránh bị che bởi navbar khi scroll */
+  @media (max-width: 991px) {
+    .main-menu-bar { display: none !important; } /* đảm bảo desktop menu không hiện trên mobile */
+  }
+</style>
+
 <body>
-  <div id="navbar-space">
+<div id="navbar-space">
+  <!-- Navbar chính -->
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container py-2 align-items-center">
+      <a class="navbar-brand" href="/">
+        <div class="logo-box">
+          <span class="logo-text d-block fs-4 fw-bold">CozySHOP</span>
+        </div>
+      </a>
 
-    <!-- Navbar chính -->
-    <nav class="navbar navbar-expand-lg custom-navbar">
-      <div class="container py-2">
-        <a class="navbar-brand" href="/">
-          <div class="logo-box">
-            <span class="logo-text d-block fs-4 fw-bold">CozySHOP</span>
-          </div>
-        </a>
-
-        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-          <span class="navbar-toggler-icon"></span>
+      <!-- MOBILE: toggler + cart cạnh nhau -->
+      <div class="d-flex d-lg-none align-items-center ms-auto">
+        <!-- Cart visible on mobile beside toggler -->
+        <button
+          class="btn btn-outline-success me-2 btn-cart-mobile"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#modal-giohang"
+          aria-label="Mở giỏ hàng"
+        >
+          🛒
+          <span class="cart-badge visually-hidden">0</span>
         </button>
 
-        <div class="collapse navbar-collapse" id="mainNav">
-          <div class="mx-auto search-wrapper">
-            <form class="d-flex search-group" method="get" action="{% url 'product_list' %}">
-              <input
-                class="form-control form-control-sm"
-                type="search"
-                name="q"
-                placeholder="Tìm kiếm sản phẩm..."
-                value="{{ request.GET.q }}"
-              >
-              <button class="btn btn-search-sm" type="submit">🔍</button>
-            </form>
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
 
-            <!--<div class="header-features d-none d-lg-flex">
-                <span>🛡️ Chất lượng</span>
-                <span>🚚 Free ship</span>
-                <span>✅ Kiểm hàng</span>
-            </div>-->
-          </div>
+      <!-- DESKTOP: collapse nội dung (search + hotline + cart) -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <div class="mx-auto search-wrapper">
+          <form class="d-flex search-group" method="get" action="{% url 'product_list' %}">
+            <input
+              class="form-control form-control-sm"
+              type="search"
+              name="q"
+              placeholder="Tìm kiếm sản phẩm..."
+              value="{{ request.GET.q }}"
+            >
+            <button class="btn btn-search-sm" type="submit">🔍</button>
+          </form>
 
-          <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item me-3">
-              <a class="nav-link text-white d-flex align-items-center" href="#">
-                <h5 class="fw-bold text-danger">Hotline: 0359 264 090</h5>
-              </a>
-            </li>
+          <!-- (Desktop only) các feature -->
+          <!--<div class="header-features d-none d-lg-flex">
+              <span>🛡️ Chất lượng</span>
+              <span>🚚 Free ship</span>
+              <span>✅ Kiểm hàng</span>
+          </div>-->
+        </div>
 
-            <li class="nav-item">
-              <div class="btn-cart position-relative">
-                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal-giohang"> 🛒 </button>
-                <span class="cart-badge">0</span>
-              </div>
-            </li>
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item me-3 d-none d-lg-flex align-items-center">
+            <a class="nav-link text-white d-flex align-items-center" href="#">
+              <h5 class="fw-bold text-danger mb-0">Hotline: 0359 264 090</h5>
+            </a>
+          </li>
+
+          <!-- Desktop cart (keeps original visual for large screens) -->
+          <li class="nav-item d-none d-lg-block">
+            <div class="btn-cart position-relative">
+              <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal-giohang" aria-label="Mở giỏ hàng"> 🛒 </button>
+              <span class="cart-badge">0</span>
+            </div>
+          </li>
+
+          <!-- On mobile, show category links inside collapse (so user can open toggler and see categories) -->
+          <li class="nav-item d-lg-none w-100 mt-3">
+            <div class="mobile-category-list">
+              <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link fw-bold" href="/">🏠 Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=1">💐 Bó hoa</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=2">🎂 Hoa sinh nhật</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=4">🧺 Giỏ hoa</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=34">🪷 Hoa viếng</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=6">👰 Hoa cưới</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products/?type=9">🎓 Hoa tốt nghiệp</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://www.facebook.com/profile.php?id=61587186664859">☎️ Liên hệ</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- MAIN MENU BAR - visible only on large screens -->
+      <div class="main-menu-bar d-none d-lg-block w-100 mt-2">
+        <div class="container">
+          <ul class="nav main-category-menu justify-content-center flex-wrap">
+            <li class="nav-item"><a class="nav-link text-white fw-bold" href="/">🏠 Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=1">💐 Bó hoa</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=2">🎂 Hoa sinh nhật</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=4">🧺 Giỏ hoa</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=34">🪷 Hoa viếng</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=6">👰 Hoa cưới</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="/products/?type=9">🎓 Hoa tốt nghiệp</a></li>
+            <li class="nav-item"><a class="nav-link text-white category-link" href="https://www.facebook.com/profile.php?id=61587186664859">☎️ Liên hệ</a></li>
           </ul>
         </div>
       </div>
-    </nav>
-
-
-
-
-    <div class="main-menu-bar d-none d-lg-block">
-    <div class="container">
-
-        <ul class="nav main-category-menu justify-content-center flex-wrap">
-
-            <li class="nav-item">
-                <a class="nav-link text-white fw-bold" href="/">
-                    🏠 Trang chủ
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=1">
-                    💐 Bó hoa
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=2">
-                    🎂 Hoa sinh nhật
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=4">
-                    🧺 Giỏ hoa
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=5">
-                    🪷 Hoa viếng
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=6">
-                    👰 Hoa cưới
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="/products/?type=9">
-                    🎓 Hoa tốt nghiệp
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white category-link" href="https://www.facebook.com/profile.php?id=61587186664859">
-                    ☎️ Liên hệ
-                </a>
-            </li>
-
-        </ul>
-
     </div>
+  </nav>
 </div>
-
-  </div>
 
 
 <!-- Main content -->

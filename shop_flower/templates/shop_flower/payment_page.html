@@ -1,4 +1,4 @@
-<!-- templates/shop_flower/payment_page.html -->
+<!-- templates/shop_flower/payment_page.html (responsive sửa) -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -36,20 +36,20 @@
       color:#222;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      padding:40px 20px;
+      padding:24px 12px; /* giảm padding mặc định cho mobile */
     }
 
     .page-wrap{
       max-width:980px;
       margin:18px auto;
-      padding:32px;
+      padding:28px;
     }
 
     /* Big decorative card wrapper like concept */
     .panel {
       background: linear-gradient(180deg, #fff, #fff);
       border-radius: calc(var(--radius) + 6px);
-      padding:36px;
+      padding:28px;
       border: 1px solid var(--card-border);
       box-shadow: var(--card-shadow);
       position:relative;
@@ -59,26 +59,26 @@
     /* subtle outer frame (the pink rounded area in concept) */
     .frame {
       border-radius: calc(var(--radius) + 18px);
-      padding:26px;
+      padding:22px;
       background: linear-gradient(180deg, rgba(212,85,111,0.03), rgba(212,85,111,0.01));
       box-shadow: 0 10px 30px rgba(212,85,111,0.03);
     }
 
     header.top {
       text-align:center;
-      margin-bottom:18px;
+      margin-bottom:12px;
     }
     .brand-title {
       font-weight:800;
       letter-spacing:1px;
       color:var(--accent);
-      font-size:20px;
+      font-size:18px;
       margin:0;
     }
     .page-title{
-      font-size:28px;
+      font-size:26px;
       font-weight:800;
-      margin:8px 0 4px;
+      margin:6px 0 6px;
       color:#b23d57;
       text-transform:uppercase;
       letter-spacing:1px;
@@ -94,8 +94,8 @@
     .card {
       background: #fff;
       border-radius: 14px;
-      padding:26px;
-      margin-top:18px;
+      padding:20px;
+      margin-top:14px;
       border: 1px solid rgba(212,85,111,0.08);
       box-shadow: 0 8px 30px rgba(220,60,90,0.04);
     }
@@ -184,6 +184,7 @@
       align-items:center;
       gap:12px;
       margin-top:8px;
+      flex-wrap:wrap;
     }
     .file-input input[type="file"]{ border-radius:8px; }
 
@@ -194,13 +195,38 @@
       margin:22px 0;
     }
 
-    /* responsive */
+    /* responsive tweaks */
     @media (max-width:720px){
+      .page-wrap{ padding:18px; }
+      .panel{ padding:18px; }
+      .card{ padding:16px; }
       .order-meta{ flex-direction:column; align-items:flex-start }
       .order-total{ margin-left:0 }
-      img.img-fluid{ width:180px }
+      img.img-fluid{ width:100%; max-width:320px }
       .page-title{ font-size:22px }
+      /* Make action buttons stack and full-width on small screens */
+      .controls > div, .controls > div + div, .controls .btn, .file-input input[type="file"]{ width:100% }
+      .btn{ width:100%; box-sizing:border-box }
+      .btn.secondary{ margin-top:8px }
+      .qr-wrap{ flex-direction:column; align-items:center }
+      .bank-info{ width:100%; max-width:none }
+      .file-input{ flex-direction:column; align-items:flex-start }
+      label.method{ padding:10px }
     }
+
+    /* very small devices adjustments */
+    @media (max-width:420px){
+      body{ padding:18px 10px }
+      .page-wrap{ padding:14px }
+      .page-title{ font-size:18px }
+      .brand-title{ font-size:16px }
+      .panel{ border-radius:14px }
+      .card{ border-radius:12px; padding:12px }
+      img.img-fluid{ max-width:260px }
+    }
+
+    /* Accessibility: focus outline for keyboard users */
+    label.method:focus-within{ outline:3px solid rgba(212,85,111,0.12); }
   </style>
 </head>
 <body>
@@ -249,7 +275,7 @@
             {% csrf_token %}
             <div class="controls">
               <label class="method" for="method-cash">
-                <input id="method-cash" type="radio" name="method" value="cash" {% if payment.method == "cash" %}checked{% endif %}>
+                <input id="method-cash" type="radio" name="method" value="cash" {% if payment.method == "cash" %}checked{% endif %} aria-label="Thanh toán tiền mặt">
                 <div>
                   <div style="font-weight:700">Thanh toán tiền mặt (COD)</div>
                   <div class="muted">Thanh toán khi nhận hàng — tiện lợi, không cần chuyển trước.</div>
@@ -257,16 +283,16 @@
               </label>
 
               <label class="method" for="method-bank">
-                <input id="method-bank" type="radio" name="method" value="bank" {% if payment.method == "bank" %}checked{% endif %}>
+                <input id="method-bank" type="radio" name="method" value="bank" {% if payment.method == "bank" %}checked{% endif %} aria-label="Chuyển khoản ngân hàng">
                 <div>
                   <div style="font-weight:700">Chuyển khoản ngân hàng</div>
                   <div class="muted">Chuyển khoản trước để shop chuẩn bị nhanh hơn. Hiển thị QR khi chọn phương thức này.</div>
                 </div>
               </label>
 
-              <div style="margin-top:6px;">
+              <div style="margin-top:6px; display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="submit" class="btn" id="confirm-method-button">Xác nhận phương thức</button>
-                <button type="button" class="btn secondary" onclick="window.location.reload()" style="margin-left:8px;">Làm mới</button>
+                <button type="button" class="btn secondary" onclick="window.location.reload()">Làm mới</button>
               </div>
             </div>
           </form>
@@ -295,8 +321,9 @@
                 <input id="proof" type="file" name="proof" accept="image/*,application/pdf">
               </div>
 
-              <div style="margin-top:14px;">
+              <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="submit" class="btn" id="i-transferred-btn">Tôi đã chuyển khoản</button>
+                <button type="button" class="btn secondary" onclick="document.getElementById('proof').value = ''">Xóa ảnh</button>
               </div>
             </form>
           {% else %}
@@ -313,14 +340,29 @@
   <!-- Small JS to improve UX (no logic change) -->
   <script>
     (function(){
-      // make clicking label highlight selection (native already does it),
-      // simple progressive enhancement: scroll to QR when visible after form submit
+      // scroll to QR when visible after load — mobile friendly
       var qrBlock = document.getElementById('qr-block');
       if(qrBlock){
-        // if QR exists, scroll a bit into view on load (mobile friendly)
         setTimeout(function(){
-          qrBlock.scrollIntoView({behavior:'smooth', block:'center'});
-        }, 100);
+          try{ qrBlock.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
+        }, 120);
+      }
+
+      // Make label click area larger on mobile: add click handler to whole label
+      document.querySelectorAll('label.method').forEach(function(lbl){
+        lbl.addEventListener('click', function(e){
+          // ensure radio is checked (native does this), but we also focus for accessibility
+          var radio = lbl.querySelector('input[type=radio]');
+          if(radio){ radio.focus(); }
+        });
+      });
+
+      // Improve file input on iOS: allow tapping label to open file dialog
+      var proofLabel = document.querySelector('.file-input label');
+      var proofInput = document.getElementById('proof');
+      if(proofLabel && proofInput){
+        proofLabel.style.cursor = 'pointer';
+        proofLabel.addEventListener('click', function(){ proofInput.click(); });
       }
     })();
   </script>

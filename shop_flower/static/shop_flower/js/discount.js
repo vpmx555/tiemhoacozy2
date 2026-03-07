@@ -79,5 +79,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function formatMoney(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

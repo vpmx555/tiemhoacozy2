@@ -339,14 +339,14 @@ def checkout(request):
             flower = get_object_or_404(Flower, id=flower_id)
             price = Decimal(flower.sell_price)
 
-            item_total = price * qty  # ⭐ TÍNH TOTAL TỪNG ITEM
+            item_total = price * qty  # TÍNH TOTAL TỪNG ITEM
 
             order_item = OrderItem.objects.create(
                 order=order,
                 flower=flower,
                 quantity=qty,
                 price=price,
-                total=item_total  # ⭐ LƯU VÀO DB
+                total=item_total
             )
 
             order_items.append(order_item)
@@ -380,22 +380,61 @@ def checkout(request):
         # 6) GENERATE PAYMENT TOKEN
         payment_token = generate_payment_token(order.id)
 
+        # --- Kiểm tra bắt buộc có email (theo yêu cầu): nếu không có, rollback/cleanup và trả lỗi ---
+        if not email:
+            # Xoá payment (nếu cần) và order (các order_items sẽ bị cascade nếu FK on_delete=CASCADE)
+            try:
+                payment.delete()
+            except Exception:
+                pass
+            try:
+                order.delete()
+            except Exception:
+                pass
+
+            return JsonResponse({
+                "success": False,
+                "message": "Đơn hàng thất bại: không tìm thấy địa chỉ email"
+            })
+
         # 7) SEND EMAIL (gửi link payment)
-        if email:
-            payment_url = request.build_absolute_uri(
-                reverse('payment', args=[payment_token])
-            )
-            # Sửa hàm send_order_confirmation_email để nhận payment_url
-            send_order_confirmation_email(order, order_items, payment_url=payment_url)
-            send_new_order_notify_admin(order, order_items)
+        email_sent = False
+        admin_notified = False
+        payment_url = request.build_absolute_uri(
+            reverse('payment', args=[payment_token])
+        )
+
+        try:
+            email_sent = send_order_confirmation_email(order, order_items, payment_url=payment_url)
+        except Exception as e:
+            print("Error when sending order confirmation email:", e)
+            email_sent = False
+
+        try:
+            admin_notified = send_new_order_notify_admin(order, order_items)
+        except Exception as e:
+            print("Error when sending admin notification:", e)
+            admin_notified = False
+
         # 8) SAVE SESSION
         request.session["order_id"] = order.id
 
-        return JsonResponse({
-            "success": True,
-            "order_id": order.id
-        })
-    
+        # 9) Trả về kết quả chi tiết (order tạo xong; báo kết quả gửi email)
+        if email_sent:
+            return JsonResponse({
+                "success": True,
+                "order_id": order.id,
+                "email_sent": True,
+                "message": "Đặt hàng thành công. Email xác nhận đã được gửi."
+            })
+        else:
+            return JsonResponse({
+                "success": True,
+                "order_id": order.id,
+                "email_sent": False,
+                "message": "Đặt hàng thành công nhưng không thể gửi email xác nhận. Shop sẽ xử lý thủ công."
+            })
+
     return render(request, "shop_flower/checkout.html")
 
 
