@@ -72,7 +72,7 @@ def add_logo_to_images(image_dir, logo_path, output_size=(700, 700), logo_size=(
 # --- CẤU HÌNH ĐƯỜNG DẪN ---
 # Lưu ý: Thêm chữ r trước chuỗi để tránh lỗi ký tự đặc biệt trong đường dẫn Windows
 
-SOURCE_FOLDER = r"D:\Acer\Code\Flower-Store\media\flowers"
+SOURCE_FOLDER = r"C:\Users\ACER\Downloads\Hoa vieng"
 LOGO_FILE = r"D:\Acer\Code\Flower-Store\shop_flower\static\logo.jpg"
 
 # Chạy hàm
