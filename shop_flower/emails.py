@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from backend import settings
 
 # ... các import model: Order, OrderItem, Flower, Payment, settings, etc.
 
