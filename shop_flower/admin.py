@@ -143,5 +143,4 @@ class PaymentAdmin(admin.ModelAdmin):
     colored_status.short_description = "Status"
 
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Order)
