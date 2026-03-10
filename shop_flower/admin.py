@@ -99,9 +99,49 @@ def confirm_payment_and_ship(modeladmin, request, queryset):
         if order.email:
             send_mail(subject, message, None, [order.email], fail_silently=True)
 
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ("order", "method", "status", "amount", "created_at")
-    actions = [confirm_payment_and_ship]
+from django.utils.html import format_html
+from django.contrib import admin
+from .models import Payment
 
+
+class PaymentAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "order",
+        "method",
+        "colored_status",
+        "amount",
+        "created_at",
+    )
+
+    fields = ("order", "method", "amount", "status", "created_at")
+
+    readonly_fields = (
+        "order",
+        "method",
+        "amount",
+        "created_at",
+    )
+
+    def colored_status(self, obj):
+
+        if obj.status == "confirmed":
+            color = "green"
+
+        elif obj.status == "failed":
+            color = "red"
+
+        else:
+            color = "orange"
+
+        return format_html(
+            '<strong style="color:{};">{}</strong>',
+            color,
+            obj.status
+        )
+
+    colored_status.short_description = "Status"
+
+admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Order)
